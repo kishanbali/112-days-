@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sprout — Habit Tracker</title>
+<meta name="theme-color" content="#1F3D2B">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIlNwcm91dCBIYWJpdCBUcmFja2VyIiwgInNob3J0X25hbWUiOiAiU3Byb3V0IiwgImRlc2NyaXB0aW9uIjogIkEgc2ltcGxlIGRhaWx5IGhhYml0IGFuZCBzdHJlYWsgdHJhY2tlci4iLCAic3RhcnRfdXJsIjogIi4iLCAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwgImJhY2tncm91bmRfY29sb3IiOiAiIzE1MkExRSIsICJ0aGVtZV9jb2xvciI6ICIjMUYzRDJCIiwgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwgImljb25zIjogW3sic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTUFBQUFEQUNBSUFBQURkdnZ0UUFBQUQwa2xFUVZSNG5PM2NNVzRUZVJqRzRjbUtNOUJ5QUlydFY5QnV5ekU0d0ZaMGRGdnRBYWc1QVMwMUY5Z2JVSE1LaXBFc3l4REhNKzlrL3U4a3oxTkZrZVY4MHZmei9HTVQ1dTdWMjljVHJQWEg2QUU0TmdFUkVSQVJBUkVSRUJFQkVSRVFFUUVSRVJBUkFSRVJFQkVCRVJFUUVRRVJFUkFSQVJFUkVCRUJFUkVRRVFFUkVSQVJBUkVSRUJFQkVSRVFFUUVSRVJBUkFSRVJFQkVCRVJFUUVRRVJFUkFSQVJFUkVCRUJFUkVRRVFFUkVSQVJBUkVSRUJFQkVSRVFFUUVSRVJBUkFSRVJFQkVCRVJFUUVRRVJFUkFSQVJFUkVCRUJFUkVRRVFFUkVSQVJBUkVSRUJFQkVSRVFFUUVSRVJBUkFSRVJFQkVCRVJFUUVRRVJFUkFSQVJFUkVCRUJFUkVRRVFFUkVSQVJBUkVSRUJFQkVSRVFFUUVSRVJBUkFSRVJFSkVYb3dkNDR0NjgrL1BCeDN6Nzh2OE9renlTdTFkdlg0K2U0YW01SlpyN0hDNG1BVzBtNmVaWFJ5bEpRQnZZTnAxei9Sa0pLUEo0Nlp4cnpzaTdzUFgycVdmUEg3U0NnRmJhZWFtMURRbG9qU0hyN0d4SVFJc05YR1JoUXdKYVp2Z0todzl3UVVBTGxDeXZaSXlaZ0c1VnRiYWVZUVIwazU2Rm5aU01KQ0FpaC84ayt1Ty8venp3Z0EvL2hUK2k1TFgrVzhNL3BEN2VuM004V016MXgrYzljZTVJQVMxTjU4cVR5R2dyQnpqQ051bm0zaWQvcUtUbTgyczI5aFJyL3lYNlVldlo0Zm1mdk40amJMZlZPdFFTcFZlZy9TOE1Ma1hyTkFZMGFwY2FXcUV1b0xGYjFOQlNYUUUxN0s5aGhnTXBDcWhuY3oyVDlHc0pxRzFucDNtRy8xdkJkY1BIcXdpb3JaNVo1MVJ0S2dMaXVNWUgxUHhDbjJjYmZremNwMkd3OFFGeGFBSzZTY05yL1VMSlNJTURhajYvWnAxdngzcUdjUVZhb0dSdEpXUE1CTFRNOE9VTkgrQ0NnQllidU1LMmVpWUIzZUxyKzVkZjM3ODgvODZRUlJiV013bG90WjNYMlZuUEpLREVia3V0cldkcS9wUFdRNWhYNnhaM0k1Vi9GUFRYOTgvekYzOS8rbkg5a2MvekpwdXVRSnM1cmZ4WjNlWlhRTnM3ajhDTnh2ZFFlNHFkenEvcGhpUHNlZkl1akVoRlFKMy9xZS84OHNOOUtnS2EraHBxbTZkV1MwQlQwODU2SnVsWEZORFVzYm1HR1E2a0s2QnA5UDdVczFSZFFOTzRMYXBuaGNhQXBoRzdWTTg2dlo5RXp4dmQ0VE5HNlNSS3IwQW5qNzFkOVlSNnIwQW5weDF2ZURYU3pWWU9FTkRKSm9lYWRMWjFwSUJtRndYc2NLTnhyamhlUUJmME1WYjdMOUdVRXhBUkFSRVJFQkVCRVJFUUVRRVJFUkFSQVJFUkVCRUJFUkVRRVFFUkVSQVJBUkVSRUJFQkVSRVFFUUVSRVJBUkFSRVJFQkVCRWFtNFN5dkg1UXBFUkVCRUJFUkVRRVFFUkVSQVJBUkVSRUJFQkVSRVFFUUVSRVJBUkFSRVJFQkVCRVJFUUVRRVJFUkFSQVJFUkVCRUJFUkVRRVFFUkVSQVJBUkVSRUJFQkVUa0o4UW0wVmc3OXBRbUFBQUFBRWxGVGtTdVFtQ0MiLCAic2l6ZXMiOiAiMTkyeDE5MiIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9LCB7InNyYyI6ICJkYXRhOmltYWdlL3BuZztiYXNlNjQsaVZCT1J3MEtHZ29BQUFBTlNVaEVVZ0FBQWdBQUFBSUFDQUlBQUFCN0drT3RBQUFMWmtsRVFWUjRuTzNkdlpFajF3RkcwVjBWWTVDN0FheEJYOFYxNVRJTUJTQ0xIajFaREVDMklwQXJXd2tvQTltS1FzYXdodUQ4WUlCR2Q3L1hmYzh4V1Z3VytMcnF1M2hBN2N6bkw5KytmZ0tnNXcralh3QUFZd2dBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFKUUFBRVFKQUVDVUFBQkVDUUJBbEFBQVJBa0FRSlFBQUVRSkFFQ1VBQUJFQ1FCQWxBQUFSQWtBUUpRQUFFUUpBRUNVQUFCRUNRQkFsQUFBUkFrQVFOUjNvMThBc01RUFAzNi8rTS8rKzUvL1dmR1ZjRnlmdjN6N092bzFBTmM4c3ZXM1U0VWdBWUFaN1RQNjd4R0RDQUdBV1l3ZC9mZUl3WWtKQUF3MjUrNi9wZ1RuSXdBd3hsRjIvelVsT0EwQmdGMGRkL2RmVTRLakV3RFl5Wm1tLzVJTUhKY0F3T2JPT3YyWFpPQ0lCQUEyVkpqK1N6SndMQUlBbTZoTi95VVpPQW9CZ0pXVnAvK1NETXpQRDRPRE5Wbi9aNDVpZm00QXNBNTc5eDVYZ1dtNUFjQUtyUDhWRG1kYWJnRHdFT3QyTzFlQjJiZ0J3SExXL3k2T2F6WUNBQXVac3dVYzJsUUVBSll3WklzNXVubjREZ0R1WTcvVzRpdUI0ZHdBNEE3V2YwVU9jemdCZ0ZzWnJOVTUwckVFQUc1aXFqYmlZQWNTQVBpWWtkcVU0eDFGQU9BRDVta0hEbmtJQVFDSUVnQzR4anZUM1RqcS9Ra0F2TXNrN2N5Qjcwd0E0RzNHYUFqSHZpY0JnRGVZb1lFYy9tNEVBQ0JLQU9BbDcwQ0g4d2oySVFBQVVRSUF2K085NXlROGlCMElBUHpHNkV6RjQ5aWFBQUJFQ1FEOHl2dk5DWGtvbS9wdTlBdGdJai8vN2E4TC8rQlB2Nno3U29BZENFRFU0cTIvL2IrbUNqQTV2eE80WXQzRlgvSUM1dTZCanhwbTVyY0hiOFFONE15R2ovNmx5eGN6ZVF3Z3dnM2doS2JhL2VzbUtZRzMvL056Q2RpQ0c4QjVIR2ozbnoyLzVrbEtBQ2tDY0FaSG5QNFhudjRYWkFEMjVDT2dBenZCN3I5bnp4TDQvT2NvZkFxME9qZUFRenJ4OUQ5eElZQWRDTURCbkg3Nkw4a0FiRW9BRGlNMS9aZGtBRFlpQUFlUW5mNUxNZ0NyODhQZ1ptZjlMNjErR3I0QlBoQVBhM1Z1QVBNeS9XOXlGWUMxdUFGTXl2cGY1M3pnY1c0QTB6RnROM0lWZ0FlNUFjekYrdC9MaWNGaUFqQVJXN2FNYzRObEJHQVdWdXdSVGc4V0VJQXAySy9IT1VPNGx5K0JCek5iSy9LMU1OekZEV0FrNjc4RnB3bzNFb0JoN05SMm5DM2NRZ0RHc0ZCYmM4THdJUUVBaUJLQUFidzUzY2N0NSt5WFRCMkloN1U2QWRpYjlkK1QwNFlyQkdCWDltaC96aHplSXdEN3NVU2pPSGw0a3dBQVJBbkFUcndKSGV2SytmdHE4UkE4cGkwSXdCNnMvd3c4QlhoQkFBQ2lCR0J6M25qTzQ3MW40ZU9GeVhsQUd4R0FiVm4vMlhnaThFd0E0Tk1uN3pFbjV0RnNSd0EyNU0zbW5Ed1hlQ0lBQUZFQ0FML3lVY09FUEpSTkNjQldmTTR3TTA4SFBna0FYUEorY3lvZXg5WUVZQlBlWU03UDN3bVluQWV4QXdFQWlCSUFlTWw3eitFOGduMEl3UHA4L25NVW5oUnhBZ0J2OEE1MElJZS9Hd0dBdDVtaElSejduZ1FBM21XTWR1YkFkeVlBY0kxSjJvMmozcDhBck16M2lzZmllVkVtQVBBQjcweDM0SkNIRUFENG1IbmFsT01kUlFEZ0prWnFJdzUySUFHQVc1bXExVG5Tc1FRQTdtQ3dWdVF3aC90dTlBdUF3ZjcxbHorKy9vZC8vdnYvM3Z2M24yYnJoeCsvMy9BMW5aM3BuNFFiQUN4aHdoWnpkUE1RQUZqSWtDM2cwS1lpQUxDY09idUw0NXFON3dEZ0liNFN1SVhwbjVNYkFLekF3RjNoY0tibEJnRHJjQlY0emZSUHpnMWdaVC8vOU12b2w4QWQvdlRmZjZ6N0h6UjV6eHpGL053QVlHV3VBcWIvS0FRQU50SE1nT2svRmdHQURYVXlZUHFQU0FCZ2MrZk9nT2svcnM5ZnZuMGQvUnBPeU8rWk9vUXIzd0JmK1ZsQUR6cFRCa3ovMGJrQndLNmVSL080SmJEN3B5RUFNTWJoU21EM3o4ZEhRRnZ4S2REa3J2OE5nTzArQXJwaXpoTFkvUk56QTRCWlhFN3QyQmdZL1FnM2dBMjVCRXpydzc4QVBPUUc4SjU5WW1EMGc5d0FZSFp2VHZNalZiRDFQQkVBT0NRanp1UDhNTGdOK2NGd2MxcjlCOERCUVFrQVFKUUFiTXNsWURiZS9zTXpBZGljQnN6RCtzTWxBUUNJRW9BOXVBVE13TnQvZUVFQWRxSUJZemwvZUUwQUFLSUVZRC9laEk3aTVPRk5BckFyUzdRL1p3N3ZFWUM5MmFNOU9XMjRRZ0FHc0VyN2NNNXduUUFBUkFuQUdONmNiczBKdzRjRVlCZ0x0UjFuQzdjUWdKSHMxQmFjS3R6SUw0UVo3R210L1BMSVZaaCt1SXNid0JRczErT2NJZHhMQUdaaHZ4N2g5R0FCQVppSUZWdkd1Y0V5QWpBWFczWXZKd2FMK1JKNE9yNFd2cEhwaHdlNUFVekt1bDNuZk9CeGJnRHpjaFY0ayttSHRiZ0J6TTdlWFhJYXNDSTNnQU53RmZoayttRURBbkFZMlF5WWZ0aUlBQnhNS2dPbUh6WWxBSWQwK2d5WWZ0aUJBQnpZODBxZXBnUjJIL1lrQUdkd2dndUI2WWY5Q2NCNUhQRkNZUGRoSUFFNG9mbExZUGRoQmdKd1pwYzdPendHUmg5bUl3QVZML1ozaHg1WWZKaWNBRVM5dWM2THEyRHI0WWdFZ04vWWNVanh3K0FBb2dRQUlFb0FBS0lFQUNCS0FBQ2lCQUFnU2dBQW9nUUFJRW9BQUtJRUFDQktBQUNpQkFBZ1NnQUFvZ1FBSUVvQUFLSUVBQ0JLQUFDaUJBQWdTZ0FBb2dRQUlFb0FBS0lFQUNCS0FBQ2lCQUFnU2dBQW9nUUFJRW9BQUtJRUFDQktBQUNpQkFBZ1NnQUFvZ1FBSUVvQUFLSUVBQ0JLQUFDaUJBQWdTZ0FBb2dRQUlFb0FBS0lFQUNCS0FBQ2lCQUFnU2dBQW9nUUFJRW9BQUtJRUFDQktBQUNpQkFBZ1NnQUFvZ1FBSUVvQUFLSUVBQ0JLQUFDaUJBQWdTZ0FBb2dRQUlFb0FBS0lFQUNCS0FBQ2lCQUFnU2dBQW9nUUFJT3J6bDI5ZlI3OEdBQVp3QXdDSUVnQ0FLQUVBaUJJQWdDZ0JBSWdTQUlBb0FRQ0lFZ0NBS0FFQWlCSUFnQ2dCQUlnU0FJQW9BUUNJRWdDQUtBRUFpQklBZ0NnQkFJZ1NBSUFvQVFDSUVnQ0FLQUVBaUJJQWdDZ0JBSWdTQUlBb0FRQ0lFZ0NBS0FFQWlCSUFnQ2dCQUlnU0FJQW9BUUNJRWdDQUtBRUFpQklBZ0NnQkFJZ1NBSUFvQVFDSUVnQ0FLQUVBaUJJQWdDZ0JBSWdTQUlBb0FRQ0lFZ0NBS0FFQWlCSUFnQ2dCQUlnU0FJQW9BUUNJRWdDQUtBRUFpQklBZ0NnQkFJZ1NBSUFvQVFDSUVnQ0FLQUVBaUJJQWdDZ0JBSWdTQUlBb0FRQ0lFZ0NBS0FFQWlCSUFnQ2dCQUlnU0FJQW9BUUNJRWdDQUtBRUFpQklBZ0NnQkFJZ1NBSUFvQVFDSUVnQ0FLQUVBaVBvL3JLRVc1czlCV1hRQUFBQUFTVVZPUks1Q1lJST0iLCAic2l6ZXMiOiAiNTEyeDUxMiIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9XX0=">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAD0klEQVR4nO3cMW4TeRjG4cmKM9ByAIrtV9BuyzE4wFZ0dFvtAag5AS01F9gbUHMKipEsyxDHM+9k/u8kz1NFkeV80vfz/GMT5u7V29cTrPXH6AE4NgERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREJEXowd44t68+/PBx3z78v8OkzySu1dvX4+e4am5JZr7HC4mAW0m6eZXRylJQBvYNp1z/RkJKPJ46Zxrzsi7sPX2qWfPH7SCgFbaeam1DQlojSHr7GxIQIsNXGRhQwJaZvgKhw9wQUALlCyvZIyZgG5VtbaeYQR0k56FnZSMJCAih/8k+uO//zzwgA//hT+i5LX+W8M/pD7en3M8WMz1x+c9ce5IAS1N58qTyGgrBzjCNunm3id/qKTm82s29hRr/yX6UevZ4fmfvN4jbLfVOtQSpVeg/S8MLkXrNAY0apcaWqEuoLFb1NBSXQE17K9hhgMpCqhncz2T9GsJqG1np3mG/1vBdcPHqwiorZ5Z51RtKgLiuMYH1PxCn2cbfkzcp2Gw8QFxaAK6ScNr/ULJSIMDaj6/Zp1vx3qGcQVaoGRtJWPMBLTM8OUNH+CCgBYbuMK2eiYB3eLr+5df3788/86QRRbWMwlotZ3X2VnPJKDEbkutrWdq/pPWQ5hX6xZ3I5V/FPTX98/zF39/+nH9kc/zJpuuQJs5rfxZ3eZXQNs7j8CNxvdQe4qdzq/phiPsefIujEhFQJ3/qe/88sN9KgKa+hpqm6dWS0BT0856JulXFNDUsbmGGQ6kK6Bp9P7Us1RdQNO4LapnhcaAphG7VM86vZ9Ezxvd4TNG6SRKr0Anj71d9YR6r0Anpx1veDXSzVYOENDJJoeadLZ1pIBmFwXscKNxrjheQBf0MVb7L9GUExARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEam4SyvH5QpEREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBETkJ8Qm0Vg79pQmAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAD0klEQVR4nO3cMW4TeRjG4cmKM9ByAIrtV9BuyzE4wFZ0dFvtAag5AS01F9gbUHMKipEsyxDHM+9k/u8kz1NFkeV80vfz/GMT5u7V29cTrPXH6AE4NgERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREJEXowd44t68+/PBx3z78v8OkzySu1dvX4+e4am5JZr7HC4mAW0m6eZXRylJQBvYNp1z/RkJKPJ46Zxrzsi7sPX2qWfPH7SCgFbaeam1DQlojSHr7GxIQIsNXGRhQwJaZvgKhw9wQUALlCyvZIyZgG5VtbaeYQR0k56FnZSMJCAih/8k+uO//zzwgA//hT+i5LX+W8M/pD7en3M8WMz1x+c9ce5IAS1N58qTyGgrBzjCNunm3id/qKTm82s29hRr/yX6UevZ4fmfvN4jbLfVOtQSpVeg/S8MLkXrNAY0apcaWqEuoLFb1NBSXQE17K9hhgMpCqhncz2T9GsJqG1np3mG/1vBdcPHqwiorZ5Z51RtKgLiuMYH1PxCn2cbfkzcp2Gw8QFxaAK6ScNr/ULJSIMDaj6/Zp1vx3qGcQVaoGRtJWPMBLTM8OUNH+CCgBYbuMK2eiYB3eLr+5df3788/86QRRbWMwlotZ3X2VnPJKDEbkutrWdq/pPWQ5hX6xZ3I5V/FPTX98/zF39/+nH9kc/zJpuuQJs5rfxZ3eZXQNs7j8CNxvdQe4qdzq/phiPsefIujEhFQJ3/qe/88sN9KgKa+hpqm6dWS0BT0856JulXFNDUsbmGGQ6kK6Bp9P7Us1RdQNO4LapnhcaAphG7VM86vZ9Ezxvd4TNG6SRKr0Anj71d9YR6r0Anpx1veDXSzVYOENDJJoeadLZ1pIBmFwXscKNxrjheQBf0MVb7L9GUExARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEam4SyvH5QpEREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBETkJ8Qm0Vg79pQmAAAAAElFTkSuQmCC">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --soil:#1F3D2B;
+    --soil-dark:#152A1E;
+    --cream:#F6F2E9;
+    --amber:#D9A441;
+    --leaf:#5B8C5A;
+    --leaf-light:#9FC49E;
+    --line: rgba(246,242,233,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--soil-dark);
+    color:var(--cream);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding-bottom:40px;
+  }
+  header{
+    padding:28px 20px 18px;
+    background:linear-gradient(180deg,var(--soil),var(--soil-dark));
+    border-bottom:1px solid var(--line);
+  }
+  header h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:28px;
+    margin:0 0 4px;
+    letter-spacing:-0.01em;
+  }
+  header p{
+    margin:0;
+    color:var(--leaf-light);
+    font-size:13px;
+  }
+  .add-row{
+    display:flex;
+    gap:8px;
+    padding:16px 20px 0;
+  }
+  .add-row input{
+    flex:1;
+    background:rgba(246,242,233,0.06);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 14px;
+    color:var(--cream);
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+  }
+  .add-row input::placeholder{color:rgba(246,242,233,0.4);}
+  .add-row button{
+    background:var(--amber);
+    color:var(--soil-dark);
+    border:none;
+    border-radius:10px;
+    padding:0 18px;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+  }
+  main{padding:20px;}
+  .habit{
+    background:rgba(246,242,233,0.04);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .habit-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .habit-name{
+    font-weight:600;
+    font-size:16px;
+  }
+  .streak{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-size:13px;
+    color:var(--amber);
+    font-weight:600;
+  }
+  .del{
+    background:none;border:none;color:rgba(246,242,233,0.35);
+    font-size:18px;cursor:pointer;padding:0 0 0 10px;line-height:1;
+  }
+  .week{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+  }
+  .day{
+    aspect-ratio:1;
+    border-radius:8px;
+    background:rgba(246,242,233,0.05);
+    border:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    color:rgba(246,242,233,0.4);
+    cursor:pointer;
+    position:relative;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .day:active{transform:scale(0.92);}
+  .day.done{
+    background:var(--leaf);
+    border-color:var(--leaf);
+    color:var(--soil-dark);
+    font-weight:600;
+  }
+  .day.today{border-color:var(--amber);}
+  .empty{
+    text-align:center;
+    color:rgba(246,242,233,0.4);
+    padding:60px 20px;
+    font-size:14px;
+    line-height:1.6;
+  }
+  .empty .big{font-size:34px;display:block;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌱 Sprout</h1>
+  <p>Tap a day to mark a habit done. Streaks grow with every day you don't skip.</p>
+</header>
+
+<div class="add-row">
+  <input id="newHabit" type="text" placeholder="Add a habit — e.g. Read 10 pages" maxlength="40">
+  <button onclick="addHabit()">Add</button>
+</div>
+
+<main id="list"></main>
+
+<script>
+const STORAGE_KEY = 'sprout-habits-v1';
+const DAY_LABELS = ['S','M','T','W','T','F','S'];
+
+function loadHabits(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveHabits(habits){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+}
+
+function todayKey(offset=0){
+  const d = new Date();
+  d.setDate(d.getDate()+offset);
+  return d.toISOString().slice(0,10);
+}
+
+function currentStreak(dates){
+  let streak = 0;
+  for(let i=0;i<365;i++){
+    if(dates.includes(todayKey(-i))) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function addHabit(){
+  const input = document.getElementById('newHabit');
+  const name = input.value.trim();
+  if(!name) return;
+  const habits = loadHabits();
+  habits.push({ id: Date.now().toString(), name, dates: [] });
+  saveHabits(habits);
+  input.value = '';
+  render();
+}
+
+function toggleDay(habitId, dateKey){
+  const habits = loadHabits();
+  const habit = habits.find(h => h.id === habitId);
+  if(!habit) return;
+  const idx = habit.dates.indexOf(dateKey);
+  if(idx >= 0) habit.dates.splice(idx,1);
+  else habit.dates.push(dateKey);
+  saveHabits(habits);
+  render();
+}
+
+function deleteHabit(habitId){
+  let habits = loadHabits();
+  habits = habits.filter(h => h.id !== habitId);
+  saveHabits(habits);
+  render();
+}
+
+function render(){
+  const habits = loadHabits();
+  const list = document.getElementById('list');
+
+  if(habits.length === 0){
+    list.innerHTML = `<div class="empty"><span class="big">🌾</span>No habits yet.<br>Add one above to start your first streak.</div>`;
+    return;
+  }
+
+  const todayStr = todayKey(0);
+  list.innerHTML = habits.map(habit => {
+    const streak = currentStreak(habit.dates);
+    const days = [];
+    for(let i=6;i>=0;i--){
+      const key = todayKey(-i);
+      const dateObj = new Date(key);
+      const done = habit.dates.includes(key);
+      const isToday = key === todayStr;
+      days.push(`<div class="day ${done?'done':''} ${isToday?'today':''}"
+        onclick="toggleDay('${habit.id}','${key}')">${done?'✓':DAY_LABELS[dateObj.getDay()]}</div>`);
+    }
+    return `
+      <div class="habit">
+        <div class="habit-top">
+          <div class="habit-name">${escapeHtml(habit.name)}</div>
+          <div style="display:flex;align-items:center;">
+            <div class="streak">🔥 ${streak}</div>
+            <button class="del" onclick="deleteHabit('${habit.id}')">✕</button>
+          </div>
+        </div>
+        <div class="week">${days.join('')}</div>
+      </div>`;
+  }).join('');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+document.getElementById('newHabit').addEventListener('keydown', e => {
+  if(e.key === 'Enter') addHabit();
+});
+
+render();
+</script>
+</body>
+</html>
