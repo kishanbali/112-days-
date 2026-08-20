@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KEMP EYE 112 Tracker</title>
+  <style>
+    :root {
+      --bg-color: #0a0d14;
+      --card-bg: #121824;
+      --accent-gold: #d4af37;
+      --accent-cyan: #00e5ff;
+      --text-main: #e2e8f0;
+      --text-sub: #94a3b8;
+      --border-color: #1e293b;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .tracker-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .eye-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .eye {
+      width: 80px;
+      height: 48px;
+      background: #f8fafc;
+      border-radius: 50% / 50%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border: 2px solid var(--accent-gold);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+      animation: blink 4s infinite;
+    }
+
+    .iris {
+      width: 32px;
+      height: 32px;
+      background: radial-gradient(circle, #2d1800 0%, #8b5a2b 60%, #4a2e00 100%);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #d4af37;
+    }
+
+    .pupil {
+      width: 14px;
+      height: 14px;
+      background-color: #000;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .pupil::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    @keyframes blink {
+      0%, 92%, 100% { transform: scaleY(1); }
+      96% { transform: scaleY(0.05); }
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      color: var(--accent-gold);
+      margin: 0 0 4px 0;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-bar {
+      background: #0f1420;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .status-item {
+      font-size: 0.85rem;
+    }
+
+    .status-item span {
+      display: block;
+      color: var(--accent-cyan);
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .technique-box {
+      background: #162032;
+      border: 1px solid var(--accent-gold);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .vbt-tag {
+      font-size: 0.7rem;
+      background: var(--accent-gold);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .technique-title {
+      color: var(--accent-gold);
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .technique-desc {
+      font-size: 0.88rem;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .info-window {
+      background: #0c1524;
+      border: 1px dashed var(--accent-cyan);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    .info-header {
+      color: var(--accent-cyan);
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .info-content {
+      display: block;
+      line-height: 1.4;
+    }
+
+    .info-content ul {
+      margin: 4px 0;
+      padding-left: 18px;
+    }
+
+    .info-content li {
+      margin-bottom: 6px;
+    }
+
+    .info-content strong {
+      color: var(--text-main);
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      color: var(--accent-gold);
+      margin: 16px 0 8px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .checkbox-group, .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #0b0f19;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    label {
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"], input[type="radio"] {
+      accent-color: var(--accent-cyan);
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #d4af37, #8b5a2b);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+
+    .btn-next {
+      width: 100%;
+      background: linear-gradient(135deg, #00e5ff, #0088cc);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .ai-box {
+      margin-top: 20px;
+      background: #09131d;
+      border: 1px solid var(--accent-cyan);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .ai-title {
+      color: var(--accent-cyan);
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tracker-card">
+  <div class="eye-container">
+    <div class="eye">
+      <div class="iris">
+        <div class="pupil"></div>
+      </div>
+    </div>
+  </div>
+
+  <h1>KEMP EYE 112</h1>
+  <div class="subtitle">Resonance Quest Tracker</div>
+
+  <div class="status-bar">
+    <div class="status-item">Current Day<span id="display-day">Day 1 / 112</span></div>
+    <div class="status-item">Current Stage<span id="display-phase">Discovery</span></div>
+  </div>
+
+  <div class="technique-box">
+    <span class="vbt-tag">Today's Focus</span>
+    <div class="technique-title" id="tech-name">Loading Technique...</div>
+    <div class="technique-desc" id="tech-desc">Instructions loading...</div>
+  </div>
+
+  <div class="info-window">
+    <div class="info-header" onclick="toggleGuide()">
+      <span>ℹ️ Tick-Mark Option Guide</span>
+      <span id="guide-toggle-btn">[ - ]</span>
+    </div>
+    <div class="info-content" id="guide-content">
+      <ul>
+        <li><strong>Heavy/Grounded:</strong> Feeling dense weight, solid anchoring in hips, legs, or sit-bones.</li>
+        <li><strong>Warmth/Heat:</strong> Gentle physical heat rising in palms, face, chest, or lower abdomen.</li>
+        <li><strong>Tingling/Vibration:</strong> Micro-buzzing, electrical warmth, or energy current under skin.</li>
+        <li><strong>Tension Release:</strong> Softening of physical tightness in jaw, shoulders, neck, or belly.</li>
+        <li><strong>Pulse/Heartbeat:</strong> Feeling physical vascular throbbing or calm cardiac rhythm in body.</li>
+        <li><strong>Low Agitation:</strong> Quiet mind, thoughts infrequent or absent.</li>
+        <li><strong>Moderate Agitation:</strong> Mind drifts occasionally; easy to return to breath.</li>
+        <li><strong>High Agitation:</strong> Continuous mental chatter, restlessness, or racing thoughts.</li>
+        <li><strong>Surface Observer:</strong> Mind absorbed in thoughts and sensory distractions.</li>
+        <li><strong>Balanced Observer:</strong> Watching thoughts pass like clouds without getting pulled in.</li>
+        <li><strong>Deep Observer:</strong> Pure unshakeable witnessing; complete detachment from mind activity.</li>
+      </ul>
+    </div>
+  </div>
+
+  <form id="kemp-form">
+    <div class="section-title">10-Minute Session Status</div>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="session-check" required> 10-Minute Practice Completed</label>
+    </div>
+
+    <div class="section-title">Somatic Embodiment Signal</div>
+    <div class="radio-group">
+      <label><input type="radio" name="sensation" value="Heavy/Grounded" checked> Heavy / Grounded</label>
+      <label><input type="radio" name="sensation" value="Warmth/Heat"> Warmth / Internal Heat</label>
+      <label><input type="radio" name="sensation" value="Tingling/Vibration"> Tingling / Micro-Vibration</label>
+      <label><input type="radio" name="sensation" value="Tension Release"> Tension Release in Body</label>
+      <label><input type="radio" name="sensation" value="Pulse/Heartbeat"> Pulse / Heartbeat Awareness</label>
+    </div>
+
+    <div class="section-title">Mental Agitation</div>
+    <div class="radio-group">
+      <label><input type="radio" name="agitation" value="Low" checked> Low (Quiet Mind)</label>
+      <label><input type="radio" name="agitation" value="Moderate"> Moderate (Occasional Drift)</label>
+      <label><input type="radio" name="agitation" value="High"> High (Restless Thought)</label>
+    </div>
+
+    <div class="section-title">Observer Depth</div>
+    <div class="radio-group">
+      <label><input type="radio" name="observer" value="Surface"> Surface (Absorbed in Thoughts)</label>
+      <label><input type="radio" name="observer" value="Balanced" checked> Balanced (Watching Thoughts)</label>
+      <label><input type="radio" name="observer" value="Deep"> Deep (Pure Witness Space)</label>
+    </div>
+
+    <button type="submit" class="btn-submit" id="submit-btn">SUBMIT DAILY ENTRY</button>
+  </form>
+
+  <div class="ai-box" id="ai-response">
+    <div class="ai-title"><span>👁️</span> KEMP EYE AI DIAGNOSIS</div>
+    <div id="ai-feedback-text"></div>
+    <button class="btn-next" id="next-day-btn" onclick="advanceDay()">ADVANCE TO NEXT DAY PRACTICE ➔</button>
+  </div>
+</div>
+
+<script>
+  const vbtBreathingTechniques = {
+    1: { name: "Technique #1: Dual Breath Flow Awareness", desc: "Radiant one, focus awareness on the space where breath enters and exits. Observe the inhalation and exhalation currents without controlling their natural speed or rhythm." },
+    2: { name: "Technique #2: Breath Turning Point (Sandhi)", desc: "Observe the micro-instant where intake shifts into release, and where release turns back into intake. Rest attention at the exact turning point where breath turns." },
+    3: { name: "Technique #3: Internal Retention Pause (Kumbhaka)", desc: "When breath is completely inside, allow it to rest naturally. Experience the brief, silent pause inside the chest before exhalation begins." },
+    4: { name: "Technique #4: External Retention Void (Shunya)", desc: "When breath is completely expelled, drop consciousness into the quiet space outside. Rest in the motionless gap after exhalation." },
+    5: { name: "Technique #5: Eyebrow Center Breath Focus", desc: "Focus attention at the eyebrow center (Ajna). Feel the subtle upward breath stream converging at this point during each inhalation." },
+    6: { name: "Technique #6: Breath Stream Space Absorption", desc: "Treat the subtle space between inhalation and exhalation streams as an expansive, motionless field of stillness inside your body." },
+    7: { name: "Technique #7: Continuous Unbroken Breath Focus", desc: "Maintain continuous, unbroken awareness of breath flow across 10 full cycles without letting the mind wander into story or memory." },
+    8: { name: "Technique #8: Heart Center Breath Origin", desc: "Feel each inhalation emerging directly from the center of the heart space, and each exhalation returning home to the heart." },
+    9: { name: "Technique #9: Central Nadi Energy Thread", desc: "Trace breath movement as a fine thread of light or sensation rising up the spine during inhalation and descending during exhalation." },
+    10: { name: "Technique #10: Dissolution in Breath Pause", desc: "During the still pause after exhalation, allow mental noise and ego thoughts to dissolve into the surrounding quiet space." },
+    11: { name: "Technique #11: Subtle Breath Sound Resonance", desc: "Listen internally to the silent, natural vibration sound generated by breath moving through the throat and nasal passages." },
+    12: { name: "Technique #12: Unified Breath & Somatic Synthesis", desc: "Combine breath turning point awareness with deep bodily grounding in a seamless 10-minute meditation." }
+  };
+
+  const stages = [
+    { maxDay: 12, name: "Foundation Discovery" },
+    { maxDay: 17, name: "L1: Stability" },
+    { maxDay: 22, name: "L2: Grounding" },
+    { maxDay: 27, name: "L3: Alignment" },
+    { maxDay: 32, name: "L4: Decoupling" },
+    { maxDay: 37, name: "L5: Calm" },
+    { maxDay: 42, name: "L6: Coherence" },
+    { maxDay: 47, name: "L7: Awareness" },
+    { maxDay: 52, name: "L8: Vibration" },
+    { maxDay: 57, name: "L9: Expansion" },
+    { maxDay: 62, name: "L10: Transmutation" },
+    { maxDay: 67, name: "L11: Stillness" },
+    { maxDay: 112, name: "L12-20: Resonance Quest" }
+  ];
+
+  let currentDay = parseInt(localStorage.getItem('kemp_current_day')) || 1;
+
+  function loadDayData() {
+    document.getElementById('display-day').innerText = `Day ${currentDay} / 112`;
+    let currentStage = stages.find(s => currentDay <= s.maxDay).name;
+    document.getElementById('display-phase').innerText = currentStage;
+
+    if (currentDay <= 12) {
+      document.getElementById('tech-name').innerText = vbtBreathingTechniques[currentDay].name;
+      document.getElementById('tech-desc').innerText = vbtBreathingTechniques[currentDay].desc;
+    } else {
+      document.getElementById('tech-name').innerText = `${currentStage} Practice`;
+      document.getElementById('tech-desc').innerText = "Apply your calibrated your calibrated technique with deep somatic awareness for 10 minutes.";
+    }
+
+    document.getElementById('session-check').checked = false;
+    document.getElementById('ai-response').style.display = 'none';
+    document.getElementById('submit-btn').style.display = 'block';
+  }
+
+  function toggleGuide() {
+    const content = document.getElementById('guide-content');
+    const btn = document.getElementById('guide-toggle-btn');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      btn.innerText = '[ - ]';
+    } else {
+      content.style.display = 'none';
+      btn.innerText = '[ + ]';
+    }
+  }
+
+  document.getElementById('kemp-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const sensation = document.querySelector('input[name="sensation"]:checked').value;
+    const agitation = document.querySelector('input[name="agitation"]:checked').value;
+    const observer = document.querySelector('input[name="observer"]:checked').value;
+
+    let advice = "";
+    if (agitation === "High") {
+      advice = "High mental noise logged. Focus on physical weight in hips and belly breath during tomorrow's session.";
+    } else if (observer === "Deep") {
+      advice = "Deep observer state achieved. Somatic anchor successfully disconnected conscious focus from mental noise.";
+    } else {
+      advice = "Balanced session. Maintain posture stillness to deepen observer depth tomorrow.";
+    }
+
+    const feedbackText = `Day ${currentDay} Logged. Somatic Signal: [${sensation}]. Diagnostic: ${advice}`;
+    
+    document.getElementById('ai-feedback-text').innerText = feedbackText;
+    document.getElementById('ai-response').style.display = 'block';
+    document.getElementById('submit-btn').style.display = 'none';
+  });
+
+  function advanceDay() {
+    if (currentDay < 112) {
+      currentDay++;
+      localStorage.setItem('kemp_current_day', currentDay);
+      loadDayData();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  loadDayData();
+</script>
+
+</body>
+</html>
