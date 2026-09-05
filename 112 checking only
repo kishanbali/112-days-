@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KEMP EYE 112 — Preview Unlock</title>
+  <style>
+    body {
+      background: #0a0d14;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px;
+      text-align: center;
+    }
+    .box {
+      max-width: 420px;
+    }
+    h1 { color: #d4af37; font-size: 1.2rem; }
+    p { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+    a {
+      display: inline-block;
+      margin-top: 16px;
+      background: linear-gradient(135deg, #00e5ff, #0088cc);
+      color: #000;
+      font-weight: bold;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .jump-box {
+      margin-top: 20px;
+      display: flex;
+      gap: 8px;
+    }
+    .jump-box input {
+      flex: 1;
+      background: rgba(246,242,233,0.06);
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 10px;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+    .jump-box button {
+      background: #d4af37;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>👁 Preview Mode</h1>
+    <p id="status">Unlocking all 112 days for preview testing...</p>
+    <p style="font-size:0.75rem;">This only affects this device's browser. It does not touch payments, real users, or your GitHub files.</p>
+    <a href="https://kishanbali.github.io/112-days-/" id="continue-link" style="display:none;">Continue to KEMP EYE 112 ➔</a>
+
+    <div class="jump-box">
+      <input type="number" id="jump-day-input" min="1" max="112" placeholder="Jump straight to day (1-112)">
+      <button onclick="jumpToDay()">GO</button>
+    </div>
+  </div>
+
+  <script>
+    // Unlock every stage for local preview testing only.
+    // This writes to THIS BROWSER's local storage on this device — it has
+    // zero effect on GitHub, on the live code, or on any other visitor.
+    const allStages = ['L1','L2','L3','L4','L5','L6','L7','L8','L9','L10','L11','L12-20'];
+    localStorage.setItem('kemp_unlocked_stages', JSON.stringify(allStages));
+
+    document.getElementById('status').innerText = 'Done! All 112 days are now unlocked for preview on this device.';
+    document.getElementById('continue-link').style.display = 'inline-block';
+
+    function jumpToDay() {
+      const val = parseInt(document.getElementById('jump-day-input').value);
+      if (!val || val < 1 || val > 112) {
+        alert('Please enter a day between 1 and 112.');
+        return;
+      }
+      localStorage.setItem('kemp_current_day', val);
+      window.location.href = 'https://kishanbali.github.io/112-days-/';
+    }
+
+    // Auto-redirect to Day 1 after a short pause, unless the person is
+    // using the Jump to Day box instead
+    setTimeout(() => {
+      if (!document.getElementById('jump-day-input').value) {
+        window.location.href = 'https://kishanbali.github.io/112-days-/';
+      }
+    }, 4000);
+  </script>
+</body>
+</html>
