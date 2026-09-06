@@ -1,0 +1,14 @@
+name = "kemp-eye-112-payments"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kemp-eye-112"
+database_id = "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID"
+
+# Secrets are configured in Cloudflare, never committed here:
+# RAZORPAY_KEY_ID
+# RAZORPAY_KEY_SECRET
+# RAZORPAY_WEBHOOK_SECRET
+# ACCESS_TOKEN_PEPPER
