@@ -1,0 +1,14 @@
+name = "kemp-eye-112-payments"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kemp-eye-112"
+database_id = "71da40ba-3200-4781-b4a2-bfd3f9295ba2"
+
+# Configure these as Cloudflare Worker secrets; NEVER commit their values:
+# RAZORPAY_KEY_ID
+# RAZORPAY_KEY_SECRET
+# RAZORPAY_WEBHOOK_SECRET
+# ACCESS_TOKEN_PEPPER
