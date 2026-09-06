@@ -1,5 +1,5 @@
 -- KEMP EYE 112 secure payment backend (Cloudflare D1)
--- Prices are deliberately NOT hard-coded here. Insert the approved amount for each stage before enabling live checkout.
+-- Pricing is intentionally configured separately before production.
 
 CREATE TABLE IF NOT EXISTS stage_prices (
   stage_key TEXT PRIMARY KEY,
@@ -31,22 +31,21 @@ CREATE INDEX IF NOT EXISTS idx_orders_checkout_token ON orders(checkout_token_ha
 CREATE INDEX IF NOT EXISTS idx_orders_payment_id ON orders(payment_id);
 CREATE INDEX IF NOT EXISTS idx_orders_access_token ON orders(access_token_hash);
 
--- Approved stage keys already used by KEMP EYE 112's normal lock system.
--- L1 covers Days 13-17; L2 Days 18-22; ...; L11 Days 63-67; L12-20 Days 68-112.
--- Replace the amounts below with the final commercial prices before enabling checkout.
-INSERT OR IGNORE INTO stage_prices(stage_key, amount_paise, currency) VALUES
- ('L1', 1, 'INR'),
- ('L2', 1, 'INR'),
- ('L3', 1, 'INR'),
- ('L4', 1, 'INR'),
- ('L5', 1, 'INR'),
- ('L6', 1, 'INR'),
- ('L7', 1, 'INR'),
- ('L8', 1, 'INR'),
- ('L9', 1, 'INR'),
- ('L10', 1, 'INR'),
- ('L11', 1, 'INR'),
- ('L12-20', 1, 'INR');
+-- KEMP EYE 112 stage keys. Populate stage_prices with the final approved
+-- commercial amounts before enabling checkout.
+-- L1 = Days 13-17
+-- L2 = Days 18-22
+-- L3 = Days 23-27
+-- L4 = Days 28-32
+-- L5 = Days 33-37
+-- L6 = Days 38-42
+-- L7 = Days 43-47
+-- L8 = Days 48-52
+-- L9 = Days 53-57
+-- L10 = Days 58-62
+-- L11 = Days 63-67
+-- L12-20 = Days 68-112
 
--- The 1-paise seed values are intentionally unusable as commercial pricing.
--- Change them in D1 before production. The API rejects inactive/missing stages.
+-- Example only (DO NOT copy to production until the final prices are approved):
+-- INSERT INTO stage_prices(stage_key, amount_paise, currency) VALUES
+-- ('L1', 33300, 'INR');
