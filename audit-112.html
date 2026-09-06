@@ -10,31 +10,37 @@
   <style>
     body{margin:0;background:#0a0d14;color:#fff;font-family:system-ui,sans-serif}
     .bar{position:sticky;top:0;z-index:10;padding:12px 14px;background:#111827;border-bottom:1px solid #374151;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
-    .ok{background:#16a34a;color:white}.open{background:#2563eb;color:white}.small{font-size:12px;opacity:.8}
-    iframe{display:block;width:100%;height:calc(100vh - 92px);border:0}
+    button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}.ok{background:#16a34a;color:#fff}.blue{background:#2563eb;color:#fff}.red{background:#b91c1c;color:#fff}.small{font-size:12px;opacity:.8}
+    iframe{display:block;width:100%;height:calc(100vh - 112px);border:0}
   </style>
 </head>
 <body>
   <div class="bar">
     <button class="ok" onclick="unlockAll()">✓ UNLOCK ALL 112 DAYS</button>
-    <button class="open" onclick="reloadTracker()">↻ RELOAD TRACKER</button>
-    <span class="small" id="status">Audit mode — locks are bypassed locally in this browser only.</span>
+    <button class="blue" onclick="reloadTracker()">↻ RELOAD</button>
+    <button class="red" onclick="lockAndOpen()">🔒 RETURN TO LOCKED INDEX</button>
+    <span class="small" id="status">KEMP EYE 112 AUDIT — practice mode.</span>
   </div>
-  <iframe id="tracker" src="./index.html?audit=1"></iframe>
+  <iframe id="tracker" title="KEMP EYE 112 Tracker"></iframe>
   <script>
-    // Unlock every stage key used by the 112-day tracker for audit/testing.
-    const ALL_STAGE_KEYS = ['L1','L2','L3','L4','L5','L6','L7','L8','L9','L10','L11','L12-20'];
+    // Audit mode intentionally unlocks every existing stage in this browser.
+    // The normal index.html remains the locked version.
+    const ALL_STAGE_KEYS=['L1','L2','L3','L4','L5','L6','L7','L8','L9','L10','L11','L12-20'];
     function unlockAll(){
-      localStorage.setItem('kemp_unlocked_stages', JSON.stringify(ALL_STAGE_KEYS));
-      document.getElementById('status').textContent = 'All stage locks unlocked for this browser. You can inspect Days 1–112.';
+      localStorage.setItem('kemp_unlocked_stages',JSON.stringify(ALL_STAGE_KEYS));
+      document.getElementById('status').textContent='AUDIT MODE: all 112 days available in this browser.';
       reloadTracker();
     }
     function reloadTracker(){
       const frame=document.getElementById('tracker');
       frame.src='./index.html?audit=1&t='+Date.now();
     }
-    // Set the audit unlock before the tracker loads.
+    function lockAndOpen(){
+      localStorage.removeItem('kemp_unlocked_stages');
+      localStorage.removeItem('kemp_used_codes_global');
+      window.location.href='./index.html?locked=1&t='+Date.now();
+    }
+    // Important: unlock before creating/loading the iframe, avoiding a race on first open.
     unlockAll();
   </script>
 </body>
