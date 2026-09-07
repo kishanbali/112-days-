@@ -1,5 +1,5 @@
 -- KEMP EYE 112 secure payment backend (Cloudflare D1)
--- Pricing is intentionally configured separately before production.
+-- Approved stage price: ₹333 per paid stage.
 
 CREATE TABLE IF NOT EXISTS stage_prices (
   stage_key TEXT PRIMARY KEY,
@@ -31,8 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_orders_checkout_token ON orders(checkout_token_ha
 CREATE INDEX IF NOT EXISTS idx_orders_payment_id ON orders(payment_id);
 CREATE INDEX IF NOT EXISTS idx_orders_access_token ON orders(access_token_hash);
 
--- KEMP EYE 112 stage keys. Populate stage_prices with the final approved
--- commercial amounts before enabling checkout.
+-- KEMP EYE 112 stage keys.
 -- L1 = Days 13-17
 -- L2 = Days 18-22
 -- L3 = Days 23-27
@@ -46,6 +45,17 @@ CREATE INDEX IF NOT EXISTS idx_orders_access_token ON orders(access_token_hash);
 -- L11 = Days 63-67
 -- L12-20 = Days 68-112
 
--- Example only (DO NOT copy to production until the final prices are approved):
--- INSERT INTO stage_prices(stage_key, amount_paise, currency) VALUES
--- ('L1', 33300, 'INR');
+-- All paid stages are ₹333 (33,300 paise).
+INSERT OR REPLACE INTO stage_prices(stage_key, amount_paise, currency, active) VALUES
+('L1', 33300, 'INR', 1),
+('L2', 33300, 'INR', 1),
+('L3', 33300, 'INR', 1),
+('L4', 33300, 'INR', 1),
+('L5', 33300, 'INR', 1),
+('L6', 33300, 'INR', 1),
+('L7', 33300, 'INR', 1),
+('L8', 33300, 'INR', 1),
+('L9', 33300, 'INR', 1),
+('L10', 33300, 'INR', 1),
+('L11', 33300, 'INR', 1),
+('L12-20', 33300, 'INR', 1);
