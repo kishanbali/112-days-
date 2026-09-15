@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KEMP EYE 👁 — AI Payment Agent TEST</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#071018;color:#eef7ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#17334a 0,#071018 48%,#03070b 100%)}.wrap{max-width:720px;margin:auto;padding:24px}.eye{width:112px;height:72px;border:3px solid #9edcff;border-radius:70% 10%;transform:rotate(45deg);margin:25px auto 35px;display:grid;place-items:center;box-shadow:0 0 35px #4cb8ff55}.pupil{width:34px;height:34px;border-radius:50%;background:#9edcff;box-shadow:0 0 25px #9edcff;transform:rotate(-45deg)}h1{text-align:center;font-size:28px;margin:0}.tag{text-align:center;color:#9edcff;margin:8px 0 24px}.card{background:#0d1a24cc;border:1px solid #28445a;border-radius:22px;padding:20px;margin:14px 0;backdrop-filter:blur(10px)}.msg{line-height:1.6;color:#d8e8f3}.stages{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}.stage{border:1px solid #31526b;background:#102333;color:#eaf6ff;border-radius:14px;padding:13px;cursor:pointer}.stage.active{border-color:#9edcff;box-shadow:0 0 18px #4cb8ff33}.stage small{display:block;color:#8caabd;margin-top:4px}.cta{width:100%;border:0;border-radius:15px;padding:15px;margin-top:16px;font-weight:700;font-size:16px;cursor:pointer;background:#9edcff;color:#061018}.cta:disabled{opacity:.45;cursor:not-allowed}.status{min-height:24px;margin-top:14px;color:#9edcff}.mode{display:inline-block;border:1px solid #d6a83f;color:#ffd979;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.note{font-size:13px;color:#8da5b6;line-height:1.5}.result{word-break:break-all;background:#061019;border-radius:12px;padding:12px;font-size:12px;display:none}.back{display:inline-block;color:#9edcff;text-decoration:none;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eye"><div class="pupil"></div></div>
+  <h1>KEMP EYE 👁 AI Payment Agent</h1>
+  <div class="tag"><span class="mode">RAZORPAY TEST MODE</span></div>
+
+  <section class="card">
+    <div class="msg" id="agentMsg"><strong>KEMP EYE AI:</strong> Welcome. I will guide you through the test access process. Select the stage you want to test.</div>
+    <div class="stages" id="stages"></div>
+    <button class="cta" id="payBtn" disabled>START ₹333 TEST PAYMENT</button>
+    <div class="status" id="status"></div>
+    <div class="result" id="result"></div>
+  </section>
+
+  <section class="card">
+    <div class="note"><strong>TEST ONLY.</strong> This page is for checking the KEMP EYE payment flow. It does not alter the verified 112-day audit page or the normal locked index. No live payment keys are included here.</div>
+  </section>
+  <a class="back" href="../../">← KEMP EYE 112</a>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+// Set this after the separate Cloudflare Worker is deployed.
+const WORKER_URL = 'https://REPLACE-WITH-YOUR-CLOUDFLARE-WORKER-URL';
+const PRICE = 333;
+const stages = [
+ ['L1','Days 13–17'],['L2','Days 18–22'],['L3','Days 23–27'],['L4','Days 28–32'],
+ ['L5','Days 33–37'],['L6','Days 38–42'],['L7','Days 43–47'],['L8','Days 48–52'],
+ ['L9','Days 53–57'],['L10','Days 58–62'],['L11','Days 63–67'],['L12-20','Days 68–112']
+];
+let selected=null;
+const stageBox=document.getElementById('stages'), payBtn=document.getElementById('payBtn'), msg=document.getElementById('agentMsg'), status=document.getElementById('status'), result=document.getElementById('result');
+for(const [key,days] of stages){
+ const b=document.createElement('button'); b.className='stage'; b.innerHTML='<strong>'+key+'</strong><small>'+days+'</small>';
+ b.onclick=()=>{selected=key;document.querySelectorAll('.stage').forEach(x=>x.classList.remove('active'));b.classList.add('active');payBtn.disabled=false;msg.innerHTML='<strong>KEMP EYE AI:</strong> You selected <strong>'+key+'</strong> ('+days+'). This is a ₹333 TEST MODE payment. When Razorpay confirms the test payment, I will ask the secure backend to verify it and return stage access.';status.textContent='Ready for test checkout.'}; stageBox.appendChild(b);
+}
+function cleanUrl(){return WORKER_URL.replace(/\/$/,'')}
+async function createOrder(){
+ const r=await fetch(cleanUrl()+'/api/order',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({stage_key:selected})});
+ const data=await r.json(); if(!r.ok||!data.ok) throw new Error(data.error||'Could not create test order'); return data;
+}
+async function verify(payment,order){
+ const r=await fetch(cleanUrl()+'/api/verify',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({checkout_token:order.checkout_token,razorpay_payment_id:payment.razorpay_payment_id,razorpay_order_id:payment.razorpay_order_id,razorpay_signature:payment.razorpay_signature})});
+ const data=await r.json(); if(!r.ok||!data.ok) throw new Error(data.error||'Verification failed'); return data;
+}
+payBtn.onclick=async()=>{
+ if(!selected)return;
+ if(WORKER_URL.includes('REPLACE-WITH')){status.textContent='First deploy the separate Cloudflare payment Worker, then put its workers.dev URL in this page.';return;}
+ payBtn.disabled=true;status.textContent='KEMP EYE AI is creating the secure TEST order…';result.style.display='none';
+ try{
+   const order=await createOrder();
+   status.textContent='Opening Razorpay TEST checkout…';
+   const options={key:order.key_id,amount:order.amount,currency:order.currency,name:'KEMP EYE 👁',description:'KEMP EYE '+selected+' — TEST MODE',order_id:order.order_id,handler:async response=>{
+      try{status.textContent='KEMP EYE AI is securely verifying the test payment…';const access=await verify(response,order);status.textContent='TEST PAYMENT VERIFIED ✓';msg.innerHTML='<strong>KEMP EYE AI:</strong> Test payment verified for <strong>'+access.stage_key+'</strong>. The secure backend returned stage access.';result.textContent='Test access token: '+access.access_token;result.style.display='block';}catch(e){status.textContent='Verification error: '+e.message;}
+      payBtn.disabled=false;
+   },modal:{ondismiss:()=>{status.textContent='Test checkout closed.';payBtn.disabled=false;},},theme:{color:'#9edcff'}};
+   new Razorpay(options).open();
+ }catch(e){status.textContent=e.message;payBtn.disabled=false;}
+};
+</script>
+</body>
+</html>
