@@ -2,6 +2,13 @@
 
 This folder is the backend contract for Razorpay stage purchases. It is designed to run as a Cloudflare Worker with Cloudflare D1.
 
+## Current Test Mode configuration
+
+- Paid stages: L1–L11 and L12-20.
+- Price configured in D1 schema: **₹333 per paid stage** (33,300 paise).
+- This branch is for **Razorpay Test Mode only** until end-to-end verification is complete.
+- The verified 112-day `index.html` and permanent `audit-112.html` are not modified by this backend branch.
+
 ## Security model
 
 - Razorpay Key Secret and webhook secret are Worker secrets only; never place them in `index.html`.
@@ -18,25 +25,47 @@ This folder is the backend contract for Razorpay stage purchases. It is designed
 
 Set these in Cloudflare, not in GitHub source:
 
-- `RAZORPAY_KEY_ID`
-- `RAZORPAY_KEY_SECRET`
-- `RAZORPAY_WEBHOOK_SECRET`
-- `ACCESS_TOKEN_PEPPER`
+- `RAZORPAY_KEY_ID` — **Test Mode** key ID
+- `RAZORPAY_KEY_SECRET` — **Test Mode** key secret
+- `RAZORPAY_WEBHOOK_SECRET` — webhook signing secret
+- `ACCESS_TOKEN_PEPPER` — a strong random private value
 
-## Required bindings
+Never commit the values of these secrets to GitHub or paste them into `index.html`.
+
+## Required binding
 
 - D1 binding named `DB`
+- Database: `kemp-eye-112`
+- Database ID: `71da40ba-3200-4781-b4a2-bfd3f9295ba2`
 
-## Production sequence
+## Stage mapping
 
-1. Create the Worker and D1 database.
-2. Apply `schema.sql`.
-3. Replace the 1-paise seed prices with the final approved INR prices.
-4. Deploy the Worker.
-5. Configure the Razorpay webhook to the Worker HTTPS URL and subscribe to `payment.captured` and `order.paid` as required.
-6. Test in Razorpay Test Mode.
-7. Connect `index.html` to the Worker checkout endpoint only after backend verification works.
-8. Move to Razorpay Live Mode only after KYC/live activation and end-to-end testing.
+- L1 = Days 13–17
+- L2 = Days 18–22
+- L3 = Days 23–27
+- L4 = Days 28–32
+- L5 = Days 33–37
+- L6 = Days 38–42
+- L7 = Days 43–47
+- L8 = Days 48–52
+- L9 = Days 53–57
+- L10 = Days 58–62
+- L11 = Days 63–67
+- L12-20 = Days 68–112
+
+## Test sequence
+
+1. Create/deploy the separate Cloudflare Worker from the `secure-payment-backend` branch.
+2. Apply `schema.sql` to the D1 database.
+3. Confirm the D1 stage prices are ₹333.
+4. Add the four Test Mode Worker secrets in Cloudflare.
+5. Configure the Razorpay webhook to the Worker HTTPS URL.
+6. Open the KEMP EYE payment agent and test **L1** first.
+7. Complete a Razorpay Test Mode checkout.
+8. Confirm the Worker verifies the payment and returns an access token.
+9. Test `GET /api/access` with that token.
+10. Only after successful testing should the normal `index.html` be connected to the payment endpoint.
+11. Move to Razorpay Live Mode only after KYC/live activation and complete end-to-end testing.
 
 ## API contract
 
@@ -49,7 +78,7 @@ Set these in Cloudflare, not in GitHub source:
 Response:
 
 ```json
-{"order_id":"order_...","stage_key":"L2","amount":1234,"currency":"INR","checkout_token":"..."}
+{"ok":true,"order_id":"order_...","stage_key":"L2","amount":33300,"currency":"INR","key_id":"rzp_test_...","checkout_token":"..."}
 ```
 
 `POST /api/verify` body:
