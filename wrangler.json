@@ -1,0 +1,7 @@
+{
+  "name": "112-days-main-repo9",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "single-page-application"
+  }
+}
