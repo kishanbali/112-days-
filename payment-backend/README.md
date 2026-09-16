@@ -38,7 +38,7 @@ Never commit the values of these secrets to GitHub or paste them into the HTML.
 - Binding name: `DB`
 - Database: `kemp-eye-112`
 
-The stage-price seed data is in `schema.sql`. It configures ₹333 for every paid stage. fileciteturn137file0
+The stage-price seed data is in `schema.sql`. It configures ₹333 for every paid stage.
 
 ## Stage mapping
 
