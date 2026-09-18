@@ -1,6 +1,6 @@
-name = "kemp-eye-112-payments"
+name = "kemp-eye-112-payments-test"
 main = "worker.js"
-compatibility_date = "2026-09-01"
+compatibility_date = "2026-09-18"
 
 [[d1_databases]]
 binding = "DB"
