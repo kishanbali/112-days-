@@ -19,13 +19,28 @@ async function hmacSha256Hex(secret,message) {
 function safeEqual(a,b){if(typeof a!=='string'||typeof b!=='string'||a.length!==b.length)return false;let r=0;for(let i=0;i<a.length;i++)r|=a.charCodeAt(i)^b.charCodeAt(i);return r===0;}
 function randomToken(bytes=32){const a=new Uint8Array(bytes);crypto.getRandomValues(a);return [...a].map(b=>b.toString(16).padStart(2,'0')).join('');}
 async function hashAccessToken(env,token){return sha256Hex(`${env.ACCESS_TOKEN_PEPPER}:${token}`);}
-async function razorpay(path,env,options={}){
+async function razorpay(path,env,options={}) {
   const auth=btoa(`${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`);
   const response=await fetch(`https://api.razorpay.com/v1${path}`,{...options,headers:{authorization:`Basic ${auth}`,'content-type':'application/json',...(options.headers||{})}});
   const text=await response.text();let body;try{body=JSON.parse(text)}catch{body={raw:text}}
-  if(!response.ok)throw new Error(`Razorpay ${response.status}: ${JSON.stringify(body)}`);return body;
+  if(!response.ok) throw new Error(`Razorpay ${response.status}: ${JSON.stringify(body)}`);
+  return body;
 }
 const STAGES=new Set(['L1','L2','L3','L4','L5','L6','L7','L8','L9','L10','L11','L12-20']);
+
+async function health(env){
+  const result={ok:true,d1:false,stage_price:false,secrets:{razorpay_key_id:!!env.RAZORPAY_KEY_ID,razorpay_key_secret:!!env.RAZORPAY_KEY_SECRET,webhook_secret:!!env.RAZORPAY_WEBHOOK_SECRET,access_token_pepper:!!env.ACCESS_TOKEN_PEPPER}};
+  try {
+    const row=await env.DB.prepare("SELECT stage_key, amount_paise, currency FROM stage_prices WHERE stage_key='L1' AND active=1").first();
+    result.d1=true;
+    result.stage_price=!!row;
+    if(row) result.l1={amount_paise:row.amount_paise,currency:row.currency};
+  } catch(error) {
+    result.ok=false;
+    result.error='D1 database is not initialized or the DB binding is unavailable.';
+  }
+  return json(result,result.ok?200:500);
+}
 async function createOrder(request,env){
   const body=await request.json().catch(()=>null),stageKey=body?.stage_key;
   if(!STAGES.has(stageKey))return json({ok:false,error:'Invalid stage.'},400);
@@ -86,11 +101,18 @@ export default {async fetch(request,env){
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers});
   const url=new URL(request.url);let response;
   try{
-    if(request.method==='POST'&&url.pathname==='/api/order')response=await createOrder(request,env);
+    if(request.method==='GET'&&url.pathname==='/api/health')response=await health(env);
+    else if(request.method==='POST'&&url.pathname==='/api/order')response=await createOrder(request,env);
     else if(request.method==='POST'&&url.pathname==='/api/verify')response=await verifyPayment(request,env);
     else if(request.method==='POST'&&url.pathname==='/webhook/razorpay')response=await webhook(request,env);
     else if(request.method==='GET'&&url.pathname==='/api/access')response=await access(request,env);
     else response=json({ok:false,error:'Not found.'},404);
-  }catch(error){console.error(error);response=json({ok:false,error:'Server error.'},500)}
+  }catch(error){
+    console.error(error);
+    const message=String(error?.message||'');
+    if(message.startsWith('Razorpay ')) response=json({ok:false,error:message},502);
+    else if(message.includes('D1')||message.includes('stage_prices')||message.includes('no such table')) response=json({ok:false,error:'D1 database is not initialized. Apply payment-backend/schema.sql to the kemp-eye-112 D1 database.'},500);
+    else response=json({ok:false,error:'Server error.'},500);
+  }
   Object.entries(headers).forEach(([k,v])=>response.headers.set(k,v));return response;
 }};
