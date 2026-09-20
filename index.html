@@ -1257,4 +1257,104 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
 </script>
 
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}</script></body>
+<!-- Place right before </html> at line 1260 -->
+
+<!-- Bottom Attribution Caption & View Modal -->
+<style>
+  .attribution-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--card-bg, #121824);
+    border-top: 1px solid var(--border-color, #1e293b);
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-sub, #94a3b8);
+    z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .attribution-btn {
+    background: transparent;
+    border: none;
+    color: var(--accent-gold, #d4af37);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: underline;
+    margin-left: 6px;
+    padding: 0;
+  }
+
+  .attribution-btn:hover {
+    color: var(--accent-cyan, #00e5ff);
+  }
+
+  /* Modal Dialog Overlay */
+  .attribution-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 13, 20, 0.85);
+    backdrop-filter: blur(6px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+  }
+
+  .attribution-modal-content {
+    background: var(--card-bg, #121824);
+    border: 1px solid var(--accent-gold, #d4af37);
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 420px;
+    width: 90%;
+    color: var(--text-main, #e2e8f0);
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  .attribution-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-sub, #94a3b8);
+    font-size: 1.4rem;
+    cursor: pointer;
+  }
+
+  .attribution-close:hover {
+    color: var(--text-main, #e2e8f0);
+  }
+</style>
+
+<!-- Caption Bar at Bottom -->
+<div class="attribution-footer">
+  <span>KEMP EYE 112 Tracker</span>
+  <button class="attribution-btn" onclick="toggleAttribution(true)">View Attribution</button>
+</div>
+
+<!-- Modal View -->
+<div id="attribution-modal" class="attribution-modal" onclick="if(event.target === this) toggleAttribution(false)">
+  <div class="attribution-modal-content">
+    <button class="attribution-close" onclick="toggleAttribution(false)">&times;</button>
+    <h3 style="color: var(--accent-gold, #d4af37); margin-top: 0; margin-bottom: 12px;">Attribution & Credits</h3>
+    <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+      <strong>Project:</strong> KEMP EYE 112 Tracker<br>
+      <strong>Repository:</strong> <a href="https://github.com/kishanbali/112-days-" target="_blank" style="color: var(--accent-cyan, #00e5ff);">112-days-</a><br>
+      <strong>Author:</strong> Kishan Bali
+    </p>
+  </div>
+</div>
+
+<script>
+  function toggleAttribution(show) {
+    document.getElementById('attribution-modal').style.display = show ? 'flex' : 'none';
+  }
+</script>
+
 </html>
