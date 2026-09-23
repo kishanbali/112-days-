@@ -1261,20 +1261,31 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
 
 <!-- Bottom Attribution Caption & View Modal -->
 <style>
-  .attribution-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+ .attribution-footer {
+    position: relative; /* Keep it in the natural document flow at the bottom */
+    margin-top: 20px;
+    padding: 12px 16px;
     background-color: var(--card-bg, #121824);
     border-top: 1px solid var(--border-color, #1e293b);
-    padding: 10px 16px;
-    text-align: center;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
     font-size: 0.8rem;
     color: var(--text-sub, #94a3b8);
-    z-index: 1000;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-  }
+    z-index: 1;
+}
+
+.attribution-modal {
+    display: none; /* Must start hidden so it doesn't block interactions */
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Keeps modal above everything else when active */
+} 
 
   .attribution-btn {
     background: transparent;
