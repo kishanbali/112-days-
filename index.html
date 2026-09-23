@@ -1342,28 +1342,25 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
     color: var(--text-main, #e2e8f0);
   }
 </style>
-
 <!-- Caption Bar at Bottom -->
-</div> <!-- Closes .tracker-card -->
+<div class="attribution-footer">
+    <span>KEMP EYE 112 Tracker</span>
+    <button class="attribution-btn" onclick="toggleAttribution(true)">View Attribution</button>
+</div>
 
-    <!-- Caption Bar at Bottom -->
-    <div class="attribution-footer">
-        <span>KEMP EYE 112 Tracker</span>
-        <button class="attribution-btn" onclick="toggleAttribution(true)">View Attribution</button>
+<!-- Modal View -->
+<div id="attribution-modal" class="attribution-modal" onclick="if(event.target === this) toggleAttribution(false)">
+    <div class="attribution-modal-content">
+        <h3>Attribution & Credits</h3>
+        <p>Your attribution details go here...</p>
+        <button onclick="toggleAttribution(false)">Close</button>
     </div>
+</div>
 
-    <!-- Modal View -->
-    <div id="attribution-modal" class="attribution-modal" onclick="if(event.target === this) toggleAttribution(false)">
-        <div class="attribution-modal-content">
-            <h3>Attribution & Credits</h3>
-            <p>Your attribution details go here...</p>
-            <button onclick="toggleAttribution(false)">Close</button>
-        </div>
-    </div>
-  <script>
-  function toggleAttribution(show) {
+<script>
+function toggleAttribution(show) {
     document.getElementById('attribution-modal').style.display = show ? 'flex' : 'none';
-  }
+}
 </script>
-
 </html>
+
