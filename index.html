@@ -1285,8 +1285,7 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
     justify-content: center;
     align-items: center;
     z-index: 9999; /* Keeps modal above everything else when active */
-} 
-
+}
   .attribution-btn {
     background: transparent;
     border: none;
@@ -1343,10 +1342,12 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   }
 </style>
 <!-- Caption Bar at Bottom -->
-<div class="attribution-footer">
-    <span>KEMP EYE 112 Tracker</span>
-    <button class="attribution-btn" onclick="toggleAttribution(true)">View Attribution</button>
-</div>
+    <div class="attribution-footer">
+        <span>KEMP EYE 112 Tracker</span>
+        <button class="attribution-btn" onclick="toggleAttribution(true)">View Attribution</button>
+    </div>
+
+</div> <!-- Closes .tracker-card so modal doesn't cover main content -->
 
 <!-- Modal View -->
 <div id="attribution-modal" class="attribution-modal" onclick="if(event.target === this) toggleAttribution(false)">
@@ -1359,8 +1360,12 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
 
 <script>
 function toggleAttribution(show) {
-    document.getElementById('attribution-modal').style.display = show ? 'flex' : 'none';
+    const modal = document.getElementById('attribution-modal');
+    if (modal) {
+        modal.style.display = show ? 'flex' : 'none';
+    }
 }
 </script>
+</body>
 </html>
 
