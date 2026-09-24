@@ -687,7 +687,13 @@ const STAGE_CODES = {
     }
   }
 
-  let currentDay = parseInt(localStorage.getItem('kemp_current_day')) || 1;
+  const requestedDay = Number(new URLSearchParams(window.location.search).get('day'));
+  let currentDay = (requestedDay >= 1 && requestedDay <= 112)
+    ? requestedDay
+    : (parseInt(localStorage.getItem('kemp_current_day')) || 1);
+  if (requestedDay >= 1 && requestedDay <= 112) {
+    try { localStorage.setItem('kemp_current_day', String(currentDay)); } catch (_) {}
+  }
 
   function loadDayData() {
     document.getElementById('display-day').innerText = `Day ${currentDay} / 112`;
@@ -1169,21 +1175,10 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   }
 
 
-  // DIRECT DAY 1 -> DAY 2 NAVIGATION
-  // This handler deliberately does not call audio, local functions, or promises.
+  // DAY 1 PLAY: use a real page navigation so no JavaScript/audio state can block Day 2.
   function startDayOnePlay() {
     if (Number(currentDay) !== 1) return;
-    currentDay = 2;
-    try { localStorage.setItem('kemp_current_day', '2'); } catch (_) {}
-
-    const dayEl = document.getElementById('display-day');
-    if (dayEl) dayEl.textContent = 'Day 2 / 112';
-
-    const btn = document.getElementById('sound-play-btn');
-    if (btn) btn.textContent = '▶ PLAY';
-
-    try { loadDayData(); } catch (_) {}
-    window.scrollTo(0, 0);
+    window.location.href = './?day=2';
   }
 
 
@@ -1376,13 +1371,12 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   }
   setInterval(checkReminder, 30000);
 
-  // DIRECT CLICK BINDING: no inline onclick and no audio dependency.
+  // DIRECT CLICK BINDING: Day 1 PLAY performs a real navigation to Day 2.
   const dayOnePlayButton = document.getElementById('sound-play-btn');
   if (dayOnePlayButton) {
     dayOnePlayButton.onclick = function (event) {
       event.preventDefault();
-      event.stopImmediatePropagation();
-      startDayOnePlay();
+      window.location.href = './?day=2';
       return false;
     };
   }
