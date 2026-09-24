@@ -451,7 +451,7 @@
       <div style="margin-bottom:4px;">🌿 <strong style="color:var(--text-main);">Aroma:</strong> <span id="tech-aroma"></span></div>
       <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
         <div>🎵 <strong style="color:var(--text-main);">Today's Soundscape:</strong> <span id="tech-sound"></span></div>
-        <button id="sound-play-btn" onclick="startDayOnePlay()" style="background:var(--accent-cyan); color:#000; border:none; border-radius:6px; padding:5px 12px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">▶ PLAY</button>
+        <button type="button" id="sound-play-btn" style="background:var(--accent-cyan); color:#000; border:none; border-radius:6px; padding:5px 12px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">▶ PLAY</button>
       </div>
     </div>
   </div>
@@ -1169,37 +1169,33 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   }
 
 
+  // Day 1 PLAY is a direct navigation control. It does not depend on audio,
+  // narration, timers, external assets, or the completion button.
   function startDayOnePlay() {
-    // Day 1 PLAY is intentionally a direct, reliable transition to Day 2.
-    // Audio is optional and must never block progression.
-    try {
-      if (typeof toggleTechniqueSound === 'function') toggleTechniqueSound();
-    } catch (err) {
-      console.warn('Audio unavailable; continuing to Day 2.', err);
+    if (currentDay !== 1) return;
+
+    try { stopTechniqueSound(); } catch (_) {}
+
+    currentDay = 2;
+    localStorage.setItem('kemp_current_day', '2');
+
+    const btn = document.getElementById('sound-play-btn');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = '▶ PLAY';
     }
 
-    if (currentDay === 1) {
-      stopTechniqueSound();
-      currentDay = 2;
-      localStorage.setItem('kemp_current_day', '2');
-
-      const btn = document.getElementById('sound-play-btn');
-      if (btn) {
-        btn.disabled = false;
-        btn.innerText = '▶ PLAY';
-      }
-
-      const submitBtn = document.getElementById('submit-btn');
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.dataset.completed = 'false';
-        submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
-      }
-
-      loadDayData();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    const submitBtn = document.getElementById('submit-btn');
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.dataset.completed = 'false';
+      submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
     }
+
+    loadDayData();
+    window.scrollTo(0, 0);
   }
+
 
   function toggleTechniqueSound() {
     const btn = document.getElementById('sound-play-btn');
@@ -1389,6 +1385,17 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
     updateReminderStatus(savedReminderTime);
   }
   setInterval(checkReminder, 30000);
+
+  // Bind the Day 1 PLAY control directly after the page has loaded.
+  // This deliberately bypasses inline handlers and the audio engine.
+  const dayOnePlayButton = document.getElementById('sound-play-btn');
+  if (dayOnePlayButton) {
+    dayOnePlayButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      startDayOnePlay();
+    });
+  }
 
   loadDayData();
 </script>
