@@ -525,7 +525,7 @@
   // ⚠️ Bump this number by 1 every time you upload new/updated files to GitHub
   // (audio files, or any future update). This forces phones/browsers to fetch
   // the fresh version instead of using an old cached copy.
-  const APP_VERSION = "2";
+  const APP_VERSION = "3";
 const RAZORPAY_PAYMENT_LINK = "https://kemp-eye-112-payments-test.kishansaraiya9.workers.dev";
   const vbtBreathingTechniques = {
     1: { name: "Technique #1: Dual Breath Flow Awareness", desc: "Radiant one, focus awareness on the space where breath enters and exits. Observe the inhalation and exhalation currents without controlling their natural speed or rhythm.", aroma: "Lavender — calming, neutral starting point", sound: "Soft rain or gentle white noise" },
@@ -701,14 +701,21 @@ const STAGE_CODES = {
   document.getElementById('kemp-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
+    const submitBtn = document.getElementById('submit-btn');
+
+    // Second tap continues to the next day. This makes Day 1 -> Day 2
+    // progression explicit and keeps the current day saved in localStorage.
+    if (submitBtn.dataset.completed === 'true') {
+      advanceDay();
+      return;
+    }
+
     const stageKeyCheck = getCurrentStageKey();
     if (stageKeyCheck && !isUnlocked(stageKeyCheck)) {
       checkLock();
       return;
     }
 
-    // KEMP EYE AI provides general guidance only — no personal responses are
-    // collected, stored, or analyzed. Nothing below is based on user data.
     const guidanceMessages = [
       "Well done completing today's session. Let your awareness settle gently as you go about the rest of your day.",
       "Session marked complete. Carry this stillness forward with you, even in small moments today.",
@@ -725,18 +732,27 @@ const STAGE_CODES = {
       document.getElementById('foundation-report-text').innerText = buildFoundationReport();
       document.getElementById('foundation-report').style.display = 'block';
       document.getElementById('ai-response').style.display = 'none';
-      document.getElementById('submit-btn').style.display = 'none';
+      submitBtn.style.display = 'none';
     } else if (currentDay === 112) {
       document.getElementById('completion-report-text').innerText = buildCompletionReport();
       document.getElementById('completion-report').style.display = 'block';
       document.getElementById('ai-response').style.display = 'none';
-      document.getElementById('submit-btn').style.display = 'none';
+      submitBtn.style.display = 'none';
     } else {
       document.getElementById('ai-feedback-text').innerText = guidanceText;
       document.getElementById('ai-response').style.display = 'block';
-      document.getElementById('submit-btn').style.display = 'none';
+
+      // Turn the same completion button into the actual progression control.
+      submitBtn.dataset.completed = 'true';
+      submitBtn.innerText = `CONTINUE TO DAY ${currentDay + 1} ➔`;
+      submitBtn.style.display = 'block';
+
+      // Keep the existing secondary button synchronized for users who prefer it.
+      const nextBtn = document.getElementById('next-day-btn');
+      if (nextBtn) nextBtn.innerText = `ADVANCE TO DAY ${currentDay + 1} PRACTICE ➔`;
     }
   });
+
 
   function buildCompletionReport() {
     return `Day 112 complete.
@@ -1353,7 +1369,30 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
 <div id="attribution-modal" class="attribution-modal" onclick="if(event.target === this) toggleAttribution(false)">
     <div class="attribution-modal-content">
         <h3>Attribution & Credits</h3>
-        <p>Your attribution details go here...</p>
+        <div style="font-size:0.76rem; color:var(--text-sub); line-height:1.45; max-height:60vh; overflow-y:auto;">
+  <p style="color:var(--text-main);font-weight:600;margin-top:0;">Days 13–112 soundscape attribution</p>
+  <p style="margin-top:0;">Individual sound sources, creators, licenses, and Freesound references are listed here for transparency.</p>
+  <ol style="padding-left:20px;margin:8px 0;">
+    <li><strong>Quartz crystal singing bowl.wav</strong> — juskiddink — Attribution 4.0 — Freesound <a href="https://freesound.org/s/129219/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#129219</a></li>
+    <li><strong>Crystal Singing Bowls</strong> — RedwoodRunner — CC0 — Freesound <a href="https://freesound.org/s/460416/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#460416</a></li>
+    <li><strong>TIBETAN BOWL - 1</strong> — SamuelGremaud — CC0 — Freesound <a href="https://freesound.org/s/518705/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#518705</a></li>
+    <li><strong>TIBETAN BOWL - 2</strong> — SamuelGremaud — CC0 — Freesound <a href="https://freesound.org/s/518704/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#518704</a></li>
+    <li><strong>TIBETAN BOWL - 3</strong> — SamuelGremaud — CC0 — Freesound <a href="https://freesound.org/s/518703/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#518703</a></li>
+    <li><strong>TIBETAN BOWL - 4</strong> — SamuelGremaud — CC0 — Freesound <a href="https://freesound.org/s/518702/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#518702</a></li>
+    <li><strong>Tibetan Singing Bowl 14cm (Struck).wav</strong> — iainmccurdy — Attribution 4.0 — Freesound <a href="https://freesound.org/s/577855/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#577855</a></li>
+    <li><strong>Tibetan Singing Bowl 10cm (Rub).wav</strong> — iainmccurdy — Attribution 4.0 — Freesound <a href="https://freesound.org/s/577860/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#577860</a></li>
+    <li><strong>high ringing low humming.wav</strong> — vestibule-door — CC0 — Freesound <a href="https://freesound.org/s/668999/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#668999</a></li>
+    <li><strong>Tibetan singing bowl</strong> — Valerie-Vivegnis — Attribution 4.0 — Freesound <a href="https://freesound.org/s/758148/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#758148</a></li>
+    <li><strong>Singing Bowl 600hz</strong> — ari__inez — CC0 — Freesound <a href="https://freesound.org/s/828529/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#828529</a></li>
+    <li><strong>Aurora – Generative Bell Soundscape by Campana</strong> — bassimat — CC0 — Freesound <a href="https://freesound.org/s/855554/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#855554</a></li>
+    <li><strong>Bowl Bell — Bb5</strong> — bassimat — CC0 — Freesound <a href="https://freesound.org/s/857905/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#857905</a></li>
+    <li><strong>Tibetan_Bells_and_Tingshas_Improv.wav</strong> — RutgerMuller — CC0 — Freesound <a href="https://freesound.org/s/365403/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#365403</a></li>
+    <li><strong>Didgeri Drone.wav</strong> — rafiqizap — CC0 — Freesound <a href="https://freesound.org/s/482703/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#482703</a></li>
+    <li><strong>didgeridoo 1</strong> — JappeHallunken — CC0 — Freesound <a href="https://freesound.org/s/501296/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#501296</a></li>
+    <li><strong>Large brass windchimes</strong> — Mr_Lamppost — CC0 — Freesound <a href="https://freesound.org/s/817531/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#817531</a></li>
+  </ol>
+  <p style="margin-bottom:0;">© 2026 KishanBali / KEMP Wisdom Publications. All rights reserved.</p>
+</div>
         <button onclick="toggleAttribution(false)">Close</button>
     </div>
 </div>
