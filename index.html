@@ -758,15 +758,21 @@ const STAGE_CODES = {
       return;
     }
 
-    // Reliable one-tap progression: save the next day first, then reload.
-    const nextDay = Math.min(112, Number(currentDay) + 1);
-    localStorage.setItem('kemp_current_day', String(nextDay));
-    submitBtn.disabled = true;
-    submitBtn.innerText = 'LOADING DAY ' + nextDay + '…';
+    // Move the tracker in memory first, then save it. No page reload required.
+    // This makes Day 1 → Day 2 immediate and avoids browser/PWA cache issues.
+    currentDay = Math.min(112, Number(currentDay) + 1);
+    localStorage.setItem('kemp_current_day', String(currentDay));
+
+    submitBtn.disabled = false;
     stopTechniqueSound();
     const narration = document.getElementById('narration-audio');
-    if (narration) narration.pause();
-    window.location.reload();
+    if (narration) {
+      narration.pause();
+      narration.currentTime = 0;
+    }
+
+    loadDayData();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function buildCompletionReport() {
