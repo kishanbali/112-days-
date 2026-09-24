@@ -1172,17 +1172,18 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   function toggleTechniqueSound() {
     const btn = document.getElementById('sound-play-btn');
 
-    // Days 1–12: browser-generated sensory sound.
+    // Day 1–12: play the built-in sensory sound.
     if (currentDay <= 12) {
       if (soundPlaying) {
         stopTechniqueSound();
+        if (btn) btn.innerText = '▶ PLAY';
         return;
       }
 
       try {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (!AudioContextClass) {
-          btn.innerText = 'AUDIO NOT SUPPORTED';
+          if (btn) btn.innerText = 'AUDIO NOT SUPPORTED';
           return;
         }
 
@@ -1191,30 +1192,50 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
         if (!generatorFn) return;
 
         const startTone = () => {
-          try {
-            soundPlaying = true;
+          soundPlaying = true;
+          if (btn) {
             btn.innerText = '■ STOP';
+            btn.disabled = true;
+          }
+
+          try {
             generatorFn(ctx);
-            setTimeout(() => {
-              if (soundPlaying) stopTechniqueSound();
-            }, 90000);
           } catch (err) {
-            console.error('KEMP EYE audio start failed:', err);
-            stopTechniqueSound();
+            console.error('KEMP EYE audio generator failed:', err);
+          }
+
+          // PLAY is the Day-completion action: after the sound starts,
+          // automatically open the next day. This removes the broken
+          // dependency on the separate completion button.
+          if (currentDay < 12) {
+            setTimeout(() => {
+              if (!soundPlaying) return;
+              const completedDay = currentDay;
+              stopTechniqueSound();
+              currentDay = completedDay + 1;
+              localStorage.setItem('kemp_current_day', String(currentDay));
+              const submitBtn = document.getElementById('submit-btn');
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.dataset.completed = 'false';
+                submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
+              }
+              loadDayData();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 1200);
           }
         };
 
-        if (ctx.state === 'suspended') {
-          ctx.resume().then(startTone).catch(err => {
-            console.error('KEMP EYE AudioContext resume failed:', err);
-            stopTechniqueSound();
-          });
-        } else {
-          startTone();
-        }
+        const resumePromise = ctx.state === 'suspended' ? ctx.resume() : Promise.resolve();
+        resumePromise.then(startTone).catch(err => {
+          console.error('KEMP EYE AudioContext resume failed:', err);
+          stopTechniqueSound();
+          if (btn) btn.innerText = '▶ PLAY';
+        });
       } catch (err) {
         console.error('KEMP EYE audio failed:', err);
         stopTechniqueSound();
+        if (btn) btn.innerText = '▶ PLAY';
       }
       return;
     }
