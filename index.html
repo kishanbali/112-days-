@@ -486,7 +486,7 @@
     <div id="completion-report-text" style="white-space:pre-line;"></div>
   </div>
 
-  <div class="copyright">© 2026 Kishan Bali / KEMP Wisdom Publications.<br>All rights reserved.<br>
+  <div class="copyright">© 2026 KishanBali / KEMP Wisdom Publications. All rights reserved.<br>
     <a href="#" onclick="resetProgress(); return false;" style="color:var(--text-sub); text-decoration:underline;">Reset Progress</a>
     &nbsp;·&nbsp;
     <a href="#" onclick="showDisclaimer(); return false;" style="color:var(--text-sub); text-decoration:underline;">Health &amp; Safety Disclaimer</a>
@@ -712,13 +712,6 @@ const STAGE_CODES = {
 
     const submitBtn = document.getElementById('submit-btn');
 
-    // Second tap continues to the next day. This makes Day 1 -> Day 2
-    // progression explicit and keeps the current day saved in localStorage.
-    if (submitBtn.dataset.completed === 'true') {
-      advanceDay();
-      return;
-    }
-
     const stageKeyCheck = getCurrentStageKey();
     if (stageKeyCheck && !isUnlocked(stageKeyCheck)) {
       checkLock();
@@ -742,24 +735,26 @@ const STAGE_CODES = {
       document.getElementById('foundation-report').style.display = 'block';
       document.getElementById('ai-response').style.display = 'none';
       submitBtn.style.display = 'none';
-    } else if (currentDay === 112) {
+      return;
+    }
+
+    if (currentDay === 112) {
       document.getElementById('completion-report-text').innerText = buildCompletionReport();
       document.getElementById('completion-report').style.display = 'block';
       document.getElementById('ai-response').style.display = 'none';
       submitBtn.style.display = 'none';
-    } else {
-      document.getElementById('ai-feedback-text').innerText = guidanceText;
-      document.getElementById('ai-response').style.display = 'block';
-
-      // Turn the same completion button into the actual progression control.
-      submitBtn.dataset.completed = 'true';
-      submitBtn.innerText = `CONTINUE TO DAY ${currentDay + 1} ➔`;
-      submitBtn.style.display = 'block';
-
-      // Keep the existing secondary button synchronized for users who prefer it.
-      const nextBtn = document.getElementById('next-day-btn');
-      if (nextBtn) nextBtn.innerText = `ADVANCE TO DAY ${currentDay + 1} PRACTICE ➔`;
+      return;
     }
+
+    // One tap now completes the current day AND forwards immediately.
+    // This removes the previous two-tap Day 1 -> Day 2 bottleneck.
+    document.getElementById('ai-feedback-text').innerText = guidanceText;
+    document.getElementById('ai-response').style.display = 'block';
+    submitBtn.dataset.completed = 'false';
+    submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
+    localStorage.setItem('kemp_current_day', currentDay);
+
+    setTimeout(() => advanceDay(), 150);
   });
 
 
