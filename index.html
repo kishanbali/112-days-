@@ -1169,30 +1169,20 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   }
 
 
-  // Day 1 PLAY is a direct navigation control. It does not depend on audio,
-  // narration, timers, external assets, or the completion button.
+  // DIRECT DAY 1 -> DAY 2 NAVIGATION
+  // This handler deliberately does not call audio, local functions, or promises.
   function startDayOnePlay() {
-    if (currentDay !== 1) return;
-
-    try { stopTechniqueSound(); } catch (_) {}
-
+    if (Number(currentDay) !== 1) return;
     currentDay = 2;
-    localStorage.setItem('kemp_current_day', '2');
+    try { localStorage.setItem('kemp_current_day', '2'); } catch (_) {}
+
+    const dayEl = document.getElementById('display-day');
+    if (dayEl) dayEl.textContent = 'Day 2 / 112';
 
     const btn = document.getElementById('sound-play-btn');
-    if (btn) {
-      btn.disabled = false;
-      btn.innerText = '▶ PLAY';
-    }
+    if (btn) btn.textContent = '▶ PLAY';
 
-    const submitBtn = document.getElementById('submit-btn');
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.dataset.completed = 'false';
-      submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
-    }
-
-    loadDayData();
+    try { loadDayData(); } catch (_) {}
     window.scrollTo(0, 0);
   }
 
@@ -1386,15 +1376,15 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   }
   setInterval(checkReminder, 30000);
 
-  // Bind the Day 1 PLAY control directly after the page has loaded.
-  // This deliberately bypasses inline handlers and the audio engine.
+  // DIRECT CLICK BINDING: no inline onclick and no audio dependency.
   const dayOnePlayButton = document.getElementById('sound-play-btn');
   if (dayOnePlayButton) {
-    dayOnePlayButton.addEventListener('click', function (event) {
+    dayOnePlayButton.onclick = function (event) {
       event.preventDefault();
-      event.stopPropagation();
+      event.stopImmediatePropagation();
       startDayOnePlay();
-    });
+      return false;
+    };
   }
 
   loadDayData();
