@@ -693,7 +693,16 @@ const STAGE_CODES = {
     document.getElementById('ai-response').style.display = 'none';
     document.getElementById('foundation-report').style.display = 'none';
     document.getElementById('completion-report').style.display = 'none';
-    document.getElementById('submit-btn').style.display = 'block';
+
+    // Reset the completion button every time a new day loads.
+    // This prevents Day 1's completed state from carrying into Day 2.
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.dataset.completed = 'false';
+    submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
+    submitBtn.style.display = 'block';
+
+    const nextBtn = document.getElementById('next-day-btn');
+    if (nextBtn) nextBtn.innerText = 'ADVANCE TO NEXT DAY PRACTICE ➔';
 
     checkLock();
   }
@@ -1215,6 +1224,10 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
       document.getElementById('narration-status').innerText = '';
       currentDay++;
       localStorage.setItem('kemp_current_day', currentDay);
+      // Ensure the next day always starts as a fresh, uncompleted session.
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.dataset.completed = 'false';
+      submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
       document.getElementById('foundation-report').style.display = 'none';
       loadDayData();
       window.scrollTo({ top: 0, behavior: 'smooth' });
