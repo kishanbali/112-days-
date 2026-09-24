@@ -465,9 +465,9 @@
     <div class="reminder-status" id="reminder-status">Set a time that suits you. Works while the app is open in the background — for a guaranteed alert even when closed, also set a phone alarm at the same time.</div>
   </div>
 
-  <form id="kemp-form">
-    <button type="submit" class="btn-submit" id="submit-btn">MARK TODAY'S SESSION COMPLETE</button>
-  </form>
+  <div id="kemp-form">
+    <button type="button" class="btn-submit" id="submit-btn" onclick="completeAndAdvance()">MARK TODAY'S SESSION COMPLETE</button>
+  </div>
 
   <div class="ai-box" id="ai-response">
     <div class="ai-title"><span>👁️</span> KEMP EYE AI — GUIDANCE</div>
@@ -490,7 +490,7 @@
     <a href="#" onclick="resetProgress(); return false;" style="color:var(--text-sub); text-decoration:underline;">Reset Progress</a>
     &nbsp;·&nbsp;
     <a href="#" onclick="showDisclaimer(); return false;" style="color:var(--text-sub); text-decoration:underline;">Health &amp; Safety Disclaimer</a>
-    <details style="margin-top:14px; padding:10px 12px; border:1px solid var(--border-color); border-radius:8px; background:#0f1420;">
+    <details id="sound-attribution-details" style="margin-top:14px; padding:10px 12px; border:1px solid var(--border-color); border-radius:8px; background:#0f1420;">
       <summary style="cursor:pointer; color:var(--accent-gold); font-weight:600; font-size:0.78rem;">17 SOUND ATTRIBUTIONS — DAYS 13–112</summary>
       <div style="font-size:0.68rem; color:var(--text-sub); line-height:1.45; margin-top:8px;">
         <ol style="padding-left:18px; margin:0;">
@@ -512,6 +512,7 @@
           <li><strong>didgeridoo 1</strong> — JappeHallunken — CC0 — Freesound #501296</li>
           <li><strong>Large brass windchimes</strong> — Mr_Lamppost — CC0 — Freesound #817531</li>
         </ol>
+      <button type="button" onclick="document.getElementById('sound-attribution-details').open=false;" style="margin-top:10px; background:transparent; color:var(--text-sub); border:1px solid var(--border-color); border-radius:6px; padding:5px 10px; font-size:0.7rem; cursor:pointer;">CLOSE ATTRIBUTIONS</button>
       </div>
     </details>
   </div>
@@ -731,9 +732,7 @@ const STAGE_CODES = {
     checkLock();
   }
 
-  document.getElementById('kemp-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-
+  function completeAndAdvance() {
     const submitBtn = document.getElementById('submit-btn');
 
     const stageKeyCheck = getCurrentStageKey();
@@ -752,7 +751,6 @@ const STAGE_CODES = {
       "Practice complete for today. Trust the process — depth builds gradually, session by session.",
       "Session marked. However today felt, you showed up — that's the practice."
     ];
-    const guidanceText = guidanceMessages[currentDay % guidanceMessages.length];
 
     if (currentDay === 12) {
       document.getElementById('foundation-report-text').innerText = buildFoundationReport();
@@ -770,14 +768,13 @@ const STAGE_CODES = {
       return;
     }
 
-    // One tap completes the current day AND immediately advances.
-    document.getElementById('ai-feedback-text').innerText = guidanceText;
-    document.getElementById('ai-response').style.display = 'block';
+    document.getElementById('ai-feedback-text').innerText =
+      guidanceMessages[currentDay % guidanceMessages.length];
     localStorage.setItem('kemp_current_day', currentDay);
 
-    // Advance synchronously so Day 1 -> Day 2 cannot get stuck.
+    // Direct button action: no form submission or delayed callback.
     advanceDay();
-  });
+  }
 
 
   function buildCompletionReport() {
@@ -1182,13 +1179,23 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
         return;
       }
       const ctx = getAudioCtx();
-      if (ctx.state === 'suspended') ctx.resume();
       const generatorFn = soundGenerators[currentDay];
       if (!generatorFn) return;
-      soundPlaying = true;
-      document.getElementById('sound-play-btn').innerText = '■ STOP';
-      generatorFn(ctx);
-      setTimeout(() => { if (soundPlaying) stopTechniqueSound(); }, 90000);
+
+      const startTone = () => {
+        if (!soundPlaying) {
+          soundPlaying = true;
+          document.getElementById('sound-play-btn').innerText = '■ STOP';
+          try { generatorFn(ctx); } catch (e) { stopTechniqueSound(); }
+          setTimeout(() => { if (soundPlaying) stopTechniqueSound(); }, 90000);
+        }
+      };
+
+      if (ctx.state === 'suspended') {
+        ctx.resume().then(startTone).catch(() => stopTechniqueSound());
+      } else {
+        startTone();
+      }
       return;
     }
 
