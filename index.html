@@ -451,7 +451,7 @@
       <div style="margin-bottom:4px;">🌿 <strong style="color:var(--text-main);">Aroma:</strong> <span id="tech-aroma"></span></div>
       <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
         <div>🎵 <strong style="color:var(--text-main);">Today's Soundscape:</strong> <span id="tech-sound"></span></div>
-        <button type="button" id="sound-play-btn" style="background:var(--accent-cyan); color:#000; border:none; border-radius:6px; padding:5px 12px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">▶ PLAY</button>
+        <a id="sound-play-btn" href="./?day=2" style="display:inline-block; background:var(--accent-cyan); color:#000; border:none; border-radius:6px; padding:5px 12px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap; text-decoration:none;">▶ PLAY</a>
       </div>
     </div>
   </div>
@@ -1371,15 +1371,10 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   }
   setInterval(checkReminder, 30000);
 
-  // DIRECT CLICK BINDING: Day 1 PLAY performs a real navigation to Day 2.
+  // PLAY is a native link to Day 2. No JavaScript handler is required.
+  // Native navigation deliberately avoids audio/state/click-handler interference.
   const dayOnePlayButton = document.getElementById('sound-play-btn');
-  if (dayOnePlayButton) {
-    dayOnePlayButton.onclick = function (event) {
-      event.preventDefault();
-      window.location.href = './?day=2';
-      return false;
-    };
-  }
+  if (dayOnePlayButton) dayOnePlayButton.onclick = null;
 
   loadDayData();
 </script>
