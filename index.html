@@ -734,23 +734,13 @@ const STAGE_CODES = {
 
   function completeAndAdvance() {
     const submitBtn = document.getElementById('submit-btn');
+    if (!submitBtn) return;
 
     const stageKeyCheck = getCurrentStageKey();
     if (stageKeyCheck && !isUnlocked(stageKeyCheck)) {
       checkLock();
       return;
     }
-
-    const guidanceMessages = [
-      "Well done completing today's session. Let your awareness settle gently as you go about the rest of your day.",
-      "Session marked complete. Carry this stillness forward with you, even in small moments today.",
-      "Today's practice is done. There's no need to judge how it felt — simply showing up is what matters.",
-      "Session complete. Let today's practice be enough, exactly as it was.",
-      "Well done. Consistency, not perfection, is what builds this practice over time.",
-      "Today's session is logged as complete. Take a slow breath before you move on to what's next.",
-      "Practice complete for today. Trust the process — depth builds gradually, session by session.",
-      "Session marked. However today felt, you showed up — that's the practice."
-    ];
 
     if (currentDay === 12) {
       document.getElementById('foundation-report-text').innerText = buildFoundationReport();
@@ -768,14 +758,16 @@ const STAGE_CODES = {
       return;
     }
 
-    document.getElementById('ai-feedback-text').innerText =
-      guidanceMessages[currentDay % guidanceMessages.length];
-    localStorage.setItem('kemp_current_day', currentDay);
-
-    // Direct button action: no form submission or delayed callback.
-    advanceDay();
+    // Reliable one-tap progression: save the next day first, then reload.
+    const nextDay = Math.min(112, Number(currentDay) + 1);
+    localStorage.setItem('kemp_current_day', String(nextDay));
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'LOADING DAY ' + nextDay + '…';
+    stopTechniqueSound();
+    const narration = document.getElementById('narration-audio');
+    if (narration) narration.pause();
+    window.location.reload();
   }
-
 
   function buildCompletionReport() {
     return `Day 112 complete.
