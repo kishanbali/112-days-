@@ -1170,68 +1170,87 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
 
 
   function toggleTechniqueSound() {
+    const btn = document.getElementById('sound-play-btn');
+
+    // Days 1–12: browser-generated sensory sound.
     if (currentDay <= 12) {
-      // Days 1-12: keep the original in-browser synthesized "glimpse" tones
       if (soundPlaying) {
         stopTechniqueSound();
         return;
       }
-      const ctx = getAudioCtx();
-      const generatorFn = soundGenerators[currentDay];
-      if (!generatorFn) return;
 
-      const startTone = () => {
-        if (!soundPlaying) {
-          soundPlaying = true;
-          document.getElementById('sound-play-btn').innerText = '■ STOP';
-          try { generatorFn(ctx); } catch (e) { stopTechniqueSound(); }
-          setTimeout(() => { if (soundPlaying) stopTechniqueSound(); }, 90000);
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+          btn.innerText = 'AUDIO NOT SUPPORTED';
+          return;
         }
-      };
 
-      if (ctx.state === 'suspended') {
-        ctx.resume().then(startTone).catch(() => stopTechniqueSound());
-      } else {
-        startTone();
+        const ctx = getAudioCtx();
+        const generatorFn = soundGenerators[currentDay];
+        if (!generatorFn) return;
+
+        const startTone = () => {
+          try {
+            soundPlaying = true;
+            btn.innerText = '■ STOP';
+            generatorFn(ctx);
+            setTimeout(() => {
+              if (soundPlaying) stopTechniqueSound();
+            }, 90000);
+          } catch (err) {
+            console.error('KEMP EYE audio start failed:', err);
+            stopTechniqueSound();
+          }
+        };
+
+        if (ctx.state === 'suspended') {
+          ctx.resume().then(startTone).catch(err => {
+            console.error('KEMP EYE AudioContext resume failed:', err);
+            stopTechniqueSound();
+          });
+        } else {
+          startTone();
+        }
+      } catch (err) {
+        console.error('KEMP EYE audio failed:', err);
+        stopTechniqueSound();
       }
       return;
     }
 
-    // Days 13-112: play the real recorded soundscape for this day range
+    // Days 13–112: recorded soundscape.
     const audio = document.getElementById('soundscape-audio');
-    const btn = document.getElementById('sound-play-btn');
+    if (!audio) return;
+
     if (!audio.paused) {
       audio.pause();
       btn.innerText = '▶ PLAY';
       soundPlaying = false;
       return;
     }
-    const path = getSoundscapePath(currentDay) + `?v=${APP_VERSION}`;
-    const absolutePath = new URL(path, document.baseURI).href;
 
-    // Always load the exact current-day file before playing.
-    if (audio.src !== absolutePath) {
-      audio.pause();
-      audio.src = absolutePath;
-    }
-    audio.currentTime = 0;
-    audio.load();
+    try {
+      const path = getSoundscapePath(currentDay) + '?v=' + Date.now();
+      audio.src = new URL(path, document.baseURI).href;
+      audio.currentTime = 0;
+      audio.load();
 
-    const playPromise = audio.play();
-    if (playPromise && typeof playPromise.then === 'function') {
-      playPromise.then(() => {
-        soundPlaying = true;
-        btn.innerText = '■ STOP';
-      }).catch(() => {
-        soundPlaying = false;
-        btn.innerText = '▶ PLAY';
-      });
-    } else {
-      soundPlaying = true;
-      btn.innerText = '■ STOP';
+      const p = audio.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => {
+          soundPlaying = true;
+          btn.innerText = '■ STOP';
+        }).catch(err => {
+          console.error('KEMP EYE soundscape play failed:', err);
+          soundPlaying = false;
+          btn.innerText = '▶ PLAY';
+        });
+      }
+    } catch (err) {
+      console.error('KEMP EYE soundscape failed:', err);
+      btn.innerText = '▶ PLAY';
     }
-    // Auto-stop after 90 seconds so it doesn't loop forever unattended
-    setTimeout(() => { if (soundPlaying && currentDay > 12) { audio.pause(); soundPlaying = false; btn.innerText = '▶ PLAY'; } }, 90000);
   }
 
   function showDisclaimer() {
