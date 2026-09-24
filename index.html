@@ -490,6 +490,30 @@
     <a href="#" onclick="resetProgress(); return false;" style="color:var(--text-sub); text-decoration:underline;">Reset Progress</a>
     &nbsp;·&nbsp;
     <a href="#" onclick="showDisclaimer(); return false;" style="color:var(--text-sub); text-decoration:underline;">Health &amp; Safety Disclaimer</a>
+    <details style="margin-top:14px; padding:10px 12px; border:1px solid var(--border-color); border-radius:8px; background:#0f1420;">
+      <summary style="cursor:pointer; color:var(--accent-gold); font-weight:600; font-size:0.78rem;">17 SOUND ATTRIBUTIONS — DAYS 13–112</summary>
+      <div style="font-size:0.68rem; color:var(--text-sub); line-height:1.45; margin-top:8px;">
+        <ol style="padding-left:18px; margin:0;">
+          <li><strong>Quartz crystal singing bowl.wav</strong> — juskiddink — Attribution 4.0 — Freesound #129219</li>
+          <li><strong>Crystal Singing Bowls</strong> — RedwoodRunner — CC0 — Freesound #460416</li>
+          <li><strong>TIBETAN BOWL - 1</strong> — SamuelGremaud — CC0 — Freesound #518705</li>
+          <li><strong>TIBETAN BOWL - 2</strong> — SamuelGremaud — CC0 — Freesound #518704</li>
+          <li><strong>TIBETAN BOWL - 3</strong> — SamuelGremaud — CC0 — Freesound #518703</li>
+          <li><strong>TIBETAN BOWL - 4</strong> — SamuelGremaud — CC0 — Freesound #518702</li>
+          <li><strong>Tibetan Singing Bowl 14cm (Struck).wav</strong> — iainmccurdy — Attribution 4.0 — Freesound #577855</li>
+          <li><strong>Tibetan Singing Bowl 10cm (Rub).wav</strong> — iainmccurdy — Attribution 4.0 — Freesound #577860</li>
+          <li><strong>high ringing low humming.wav</strong> — vestibule-door — CC0 — Freesound #668999</li>
+          <li><strong>Tibetan singing bowl</strong> — Valerie-Vivegnis — Attribution 4.0 — Freesound #758148</li>
+          <li><strong>Singing Bowl 600hz</strong> — ari__inez — CC0 — Freesound #828529</li>
+          <li><strong>Aurora – Generative Bell Soundscape by Campana</strong> — bassimat — CC0 — Freesound #855554</li>
+          <li><strong>Bowl Bell — Bb5</strong> — bassimat — CC0 — Freesound #857905</li>
+          <li><strong>Tibetan_Bells_and_Tingshas_Improv.wav</strong> — RutgerMuller — CC0 — Freesound #365403</li>
+          <li><strong>Didgeri Drone.wav</strong> — rafiqizap — CC0 — Freesound #482703</li>
+          <li><strong>didgeridoo 1</strong> — JappeHallunken — CC0 — Freesound #501296</li>
+          <li><strong>Large brass windchimes</strong> — Mr_Lamppost — CC0 — Freesound #817531</li>
+        </ol>
+      </div>
+    </details>
   </div>
 </div>
 
@@ -746,15 +770,13 @@ const STAGE_CODES = {
       return;
     }
 
-    // One tap now completes the current day AND forwards immediately.
-    // This removes the previous two-tap Day 1 -> Day 2 bottleneck.
+    // One tap completes the current day AND immediately advances.
     document.getElementById('ai-feedback-text').innerText = guidanceText;
     document.getElementById('ai-response').style.display = 'block';
-    submitBtn.dataset.completed = 'false';
-    submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
     localStorage.setItem('kemp_current_day', currentDay);
 
-    setTimeout(() => advanceDay(), 150);
+    // Advance synchronously so Day 1 -> Day 2 cannot get stuck.
+    advanceDay();
   });
 
 
@@ -1180,15 +1202,29 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
       return;
     }
     const path = getSoundscapePath(currentDay) + `?v=${APP_VERSION}`;
-    if (audio.src.indexOf(getSoundscapePath(currentDay)) === -1) {
-      audio.src = path;
+    const absolutePath = new URL(path, document.baseURI).href;
+
+    // Always load the exact current-day file before playing.
+    if (audio.src !== absolutePath) {
+      audio.pause();
+      audio.src = absolutePath;
     }
-    audio.play().then(() => {
+    audio.currentTime = 0;
+    audio.load();
+
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.then === 'function') {
+      playPromise.then(() => {
+        soundPlaying = true;
+        btn.innerText = '■ STOP';
+      }).catch(() => {
+        soundPlaying = false;
+        btn.innerText = '▶ PLAY';
+      });
+    } else {
       soundPlaying = true;
       btn.innerText = '■ STOP';
-    }).catch(() => {
-      btn.innerText = '▶ PLAY';
-    });
+    }
     // Auto-stop after 90 seconds so it doesn't loop forever unattended
     setTimeout(() => { if (soundPlaying && currentDay > 12) { audio.pause(); soundPlaying = false; btn.innerText = '▶ PLAY'; } }, 90000);
   }
@@ -1281,138 +1317,4 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
 </script>
 
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}</script></body>
-<!-- Place right before </html> at line 1260 -->
-
-<!-- Bottom Attribution Caption & View Modal -->
-<style>
- .attribution-footer {
-    position: relative; /* Keep it in the natural document flow at the bottom */
-    margin-top: 20px;
-    padding: 12px 16px;
-    background-color: var(--card-bg, #121824);
-    border-top: 1px solid var(--border-color, #1e293b);
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-align: left;
-    font-size: 0.8rem;
-    color: var(--text-sub, #94a3b8);
-    z-index: 1;
-}
-
-.attribution-modal {
-    display: none; /* Must start hidden so it doesn't block interactions */
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* Keeps modal above everything else when active */
-}
-  .attribution-btn {
-    background: transparent;
-    border: none;
-    color: var(--accent-gold, #d4af37);
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-decoration: underline;
-    margin-left: 6px;
-    padding: 0;
-  }
-
-  .attribution-btn:hover {
-    color: var(--accent-cyan, #00e5ff);
-  }
-
-  /* Modal Dialog Overlay */
-  .attribution-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 13, 20, 0.85);
-    backdrop-filter: blur(6px);
-    justify-content: center;
-    align-items: center;
-    z-index: 1001;
-  }
-
-  .attribution-modal-content {
-    background: var(--card-bg, #121824);
-    border: 1px solid var(--accent-gold, #d4af37);
-    border-radius: 14px;
-    padding: 24px;
-    max-width: 420px;
-    width: 90%;
-    color: var(--text-main, #e2e8f0);
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  }
-
-  .attribution-close {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    background: none;
-    border: none;
-    color: var(--text-sub, #94a3b8);
-    font-size: 1.4rem;
-    cursor: pointer;
-  }
-
-  .attribution-close:hover {
-    color: var(--text-main, #e2e8f0);
-  }
-</style>
-<!-- Caption Bar at Bottom -->
-    <div class="attribution-footer">
-        <span>KEMP EYE 112 Tracker</span>
-        <button class="attribution-btn" onclick="toggleAttribution(true)">View Attribution</button>
-    </div>
-
-</div> <!-- Closes .tracker-card so modal doesn't cover main content -->
-
-<!-- Modal View -->
-<div id="attribution-modal" class="attribution-modal" onclick="if(event.target === this) toggleAttribution(false)">
-    <div class="attribution-modal-content">
-        <h3>Attribution & Credits</h3>
-        <div style="font-size:0.76rem; color:var(--text-sub); line-height:1.45; max-height:60vh; overflow-y:auto;">
-  <p style="color:var(--text-main);font-weight:600;margin-top:0;">Days 13–112 soundscape attribution</p>
-  <p style="margin-top:0;">Individual sound sources, creators, licenses, and Freesound references are listed here for transparency.</p>
-  <ol style="padding-left:20px;margin:8px 0;">
-    <li><strong>Quartz crystal singing bowl.wav</strong> — juskiddink — Attribution 4.0 — Freesound <a href="https://freesound.org/s/129219/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#129219</a></li>
-    <li><strong>Crystal Singing Bowls</strong> — RedwoodRunner — CC0 — Freesound <a href="https://freesound.org/s/460416/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#460416</a></li>
-    <li><strong>TIBETAN BOWL - 1</strong> — SamuelGremaud — CC0 — Freesound <a href="https://freesound.org/s/518705/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#518705</a></li>
-    <li><strong>TIBETAN BOWL - 2</strong> — SamuelGremaud — CC0 — Freesound <a href="https://freesound.org/s/518704/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#518704</a></li>
-    <li><strong>TIBETAN BOWL - 3</strong> — SamuelGremaud — CC0 — Freesound <a href="https://freesound.org/s/518703/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#518703</a></li>
-    <li><strong>TIBETAN BOWL - 4</strong> — SamuelGremaud — CC0 — Freesound <a href="https://freesound.org/s/518702/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#518702</a></li>
-    <li><strong>Tibetan Singing Bowl 14cm (Struck).wav</strong> — iainmccurdy — Attribution 4.0 — Freesound <a href="https://freesound.org/s/577855/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#577855</a></li>
-    <li><strong>Tibetan Singing Bowl 10cm (Rub).wav</strong> — iainmccurdy — Attribution 4.0 — Freesound <a href="https://freesound.org/s/577860/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#577860</a></li>
-    <li><strong>high ringing low humming.wav</strong> — vestibule-door — CC0 — Freesound <a href="https://freesound.org/s/668999/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#668999</a></li>
-    <li><strong>Tibetan singing bowl</strong> — Valerie-Vivegnis — Attribution 4.0 — Freesound <a href="https://freesound.org/s/758148/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#758148</a></li>
-    <li><strong>Singing Bowl 600hz</strong> — ari__inez — CC0 — Freesound <a href="https://freesound.org/s/828529/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#828529</a></li>
-    <li><strong>Aurora – Generative Bell Soundscape by Campana</strong> — bassimat — CC0 — Freesound <a href="https://freesound.org/s/855554/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#855554</a></li>
-    <li><strong>Bowl Bell — Bb5</strong> — bassimat — CC0 — Freesound <a href="https://freesound.org/s/857905/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#857905</a></li>
-    <li><strong>Tibetan_Bells_and_Tingshas_Improv.wav</strong> — RutgerMuller — CC0 — Freesound <a href="https://freesound.org/s/365403/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#365403</a></li>
-    <li><strong>Didgeri Drone.wav</strong> — rafiqizap — CC0 — Freesound <a href="https://freesound.org/s/482703/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#482703</a></li>
-    <li><strong>didgeridoo 1</strong> — JappeHallunken — CC0 — Freesound <a href="https://freesound.org/s/501296/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#501296</a></li>
-    <li><strong>Large brass windchimes</strong> — Mr_Lamppost — CC0 — Freesound <a href="https://freesound.org/s/817531/" target="_blank" rel="noopener" style="color:var(--accent-cyan);">#817531</a></li>
-  </ol>
-  <p style="margin-bottom:0;">© 2026 KishanBali / KEMP Wisdom Publications. All rights reserved.</p>
-</div>
-        <button onclick="toggleAttribution(false)">Close</button>
-    </div>
-</div>
-
-<script>
-function toggleAttribution(show) {
-    const modal = document.getElementById('attribution-modal');
-    if (modal) {
-        modal.style.display = show ? 'flex' : 'none';
-    }
-}
-</script>
-</body>
 </html>
-
