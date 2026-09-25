@@ -28,12 +28,18 @@
     const ALL_STAGE_KEYS=['L1','L2','L3','L4','L5','L6','L7','L8','L9','L10','L11','L12-20'];
     function unlockAll(){
       localStorage.setItem('kemp_unlocked_stages',JSON.stringify(ALL_STAGE_KEYS));
+      localStorage.setItem('kemp_audit_mode','1');
+      localStorage.setItem('kemp_audit_day',String(Number(localStorage.getItem('kemp_audit_day')||13)));
       document.getElementById('status').textContent='AUDIT MODE: all 112 days available in this browser.';
       reloadTracker();
     }
     function reloadTracker(){
       const frame=document.getElementById('tracker');
-      frame.src='./index.html?audit=1&t='+Date.now();
+      // Pass the current day explicitly so the production startup logic
+      // cannot reset the audit iframe back to Day 1.
+      const savedDay=Number(localStorage.getItem('kemp_audit_day')||13);
+      const day=Math.min(112, Math.max(13, savedDay));
+      frame.src='./index.html?audit=1&day='+day+'&t='+Date.now();
     }
     function lockAndOpen(){
       localStorage.removeItem('kemp_unlocked_stages');
