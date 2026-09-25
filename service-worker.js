@@ -1,4 +1,4 @@
-const CACHE='kemp-eye-112-pwa-v11';
+const CACHE='kemp-eye-112-pwa-v12';
 const CORE=['./','./index.html','./manifest.json','./icon-192.svg','./icon-512.svg'];
 
 self.addEventListener('install',e=>e.waitUntil(
