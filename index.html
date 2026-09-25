@@ -451,7 +451,7 @@
       <div style="margin-bottom:4px;">🌿 <strong style="color:var(--text-main);">Aroma:</strong> <span id="tech-aroma"></span></div>
       <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
         <div>🎵 <strong style="color:var(--text-main);">Today's Soundscape:</strong> <span id="tech-sound"></span></div>
-        <a id="sound-play-btn" href="https://kishanbali.github.io/112-days-/?day=2" style="display:inline-block; background:var(--accent-cyan); color:#000; border:none; border-radius:6px; padding:5px 12px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap; text-decoration:none;">▶ PLAY</a>
+        <button type="button" id="sound-play-btn" onclick="toggleTechniqueSound()" style="background:var(--accent-cyan); color:#000; border:none; border-radius:6px; padding:5px 12px; font-size:0.75rem; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">▶ PLAY</button>
       </div>
     </div>
   </div>
@@ -1216,26 +1216,7 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
             console.error('KEMP EYE audio generator failed:', err);
           }
 
-          // PLAY is the Day-completion action: after the sound starts,
-          // automatically open the next day. This removes the broken
-          // dependency on the separate completion button.
-          if (currentDay < 12) {
-            setTimeout(() => {
-              if (!soundPlaying) return;
-              const completedDay = currentDay;
-              stopTechniqueSound();
-              currentDay = completedDay + 1;
-              localStorage.setItem('kemp_current_day', String(currentDay));
-              const submitBtn = document.getElementById('submit-btn');
-              if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.dataset.completed = 'false';
-                submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
-              }
-              loadDayData();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 1200);
-          }
+          // PLAY only starts/stops today's sound. Day progression remains on the completion control.
         };
 
         const resumePromise = ctx.state === 'suspended' ? ctx.resume() : Promise.resolve();
@@ -1370,10 +1351,7 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   }
   setInterval(checkReminder, 30000);
 
-  // PLAY is a native link to Day 2. No JavaScript handler is required.
-  // Native navigation deliberately avoids audio/state/click-handler interference.
-  const dayOnePlayButton = document.getElementById('sound-play-btn');
-  if (dayOnePlayButton) dayOnePlayButton.onclick = null;
+  // Day 1 PLAY is intentionally local: it plays/stops the Day 1 sound and never opens payment.
 
   loadDayData();
 </script>
