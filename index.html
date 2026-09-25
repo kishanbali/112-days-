@@ -494,16 +494,12 @@
       <summary style="cursor:pointer; color:var(--accent-gold); font-weight:600; font-size:0.78rem;">17 SOUND ATTRIBUTIONS — DAYS 13–112</summary>
       <div style="font-size:0.68rem; color:var(--text-sub); line-height:1.45; margin-top:8px;">
         <ol style="padding-left:18px; margin:0;">
-          <li><a href="https://freesound.org/people/juskiddink/sounds/129219/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Quartz crystal singing bowl.wav</strong></a> — juskiddink — Attribution 4.0 — Freesound #129219</li>
           <li><a href="https://freesound.org/people/RedwoodRunner/sounds/460416/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Crystal Singing Bowls</strong></a> — RedwoodRunner — CC0 — Freesound #460416</li>
           <li><a href="https://freesound.org/people/SamuelGremaud/sounds/518705/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>TIBETAN BOWL - 1</strong></a> — SamuelGremaud — CC0 — Freesound #518705</li>
           <li><a href="https://freesound.org/people/SamuelGremaud/sounds/518704/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>TIBETAN BOWL - 2</strong></a> — SamuelGremaud — CC0 — Freesound #518704</li>
           <li><a href="https://freesound.org/people/SamuelGremaud/sounds/518703/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>TIBETAN BOWL - 3</strong></a> — SamuelGremaud — CC0 — Freesound #518703</li>
           <li><a href="https://freesound.org/people/SamuelGremaud/sounds/518702/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>TIBETAN BOWL - 4</strong></a> — SamuelGremaud — CC0 — Freesound #518702</li>
-          <li><a href="https://freesound.org/people/iainmccurdy/sounds/577855/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Tibetan Singing Bowl 14cm (Struck).wav</strong></a> — iainmccurdy — Attribution 4.0 — Freesound #577855</li>
-          <li><a href="https://freesound.org/people/iainmccurdy/sounds/577860/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Tibetan Singing Bowl 10cm (Rub).wav</strong></a> — iainmccurdy — Attribution 4.0 — Freesound #577860</li>
           <li><a href="https://freesound.org/people/vestibule-door/sounds/668999/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>high ringing low humming.wav</strong></a> — vestibule-door — CC0 — Freesound #668999</li>
-          <li><a href="https://freesound.org/people/Valerie-Vivegnis/sounds/758148/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Tibetan singing bowl</strong></a> — Valerie-Vivegnis — Attribution 4.0 — Freesound #758148</li>
           <li><a href="https://freesound.org/people/ari__inez/sounds/828529/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Singing Bowl 600hz</strong></a> — ari__inez — CC0 — Freesound #828529</li>
           <li><a href="https://freesound.org/people/bassimat/sounds/855554/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Aurora – Generative Bell Soundscape by Campana</strong></a> — bassimat — CC0 — Freesound #855554</li>
           <li><a href="https://freesound.org/people/bassimat/sounds/857905/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;"><strong>Bowl Bell — Bb5</strong></a> — bassimat — CC0 — Freesound #857905</li>
@@ -1117,20 +1113,16 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   });
 
   // Returns the display description for the given day's soundscape (13-112).
-  // 39 real recordings, cycling one-per-day across Days 13-112. Every day
+  // 35 real recordings, cycling one-per-day across Days 13-112. Every day
   // gets a different sound than the day before it (39-day cycle length),
-  // and no single sound repeats more than 3 times across the full range.
+  // and no single sound repeats more than 3 times across the full range. The pool excludes the four Attribution 4.0 recordings removed for commercial-use compatibility.
   const soundscapePool = [
-    { file: "sound-01.mp3", desc: "A soft, steady pulse echoing the rhythm of your own breath" },
     { file: "sound-02.mp3", desc: "Two harmonized tones weaving together" },
     { file: "sound-03.mp3", desc: "A rising resonance, building steadily in intensity" },
     { file: "sound-04.mp3", desc: "A deep resonance, surging and settling" },
     { file: "sound-05.mp3", desc: "A powerful wave of sound, cresting and releasing" },
     { file: "sound-06.mp3", desc: "A continuous low hum, holding and transforming" },
-    { file: "sound-07.mp3", desc: "A gentle, melodic resonance settling softly" },
-    { file: "sound-08.mp3", desc: "Two layered tones, held together" },
     { file: "sound-09.mp3", desc: "A closing shimmer of bright, clear tones" },
-    { file: "sound-10.mp3", desc: "A soft rhythmic pulse beneath the resonance" },
     { file: "sound-11.mp3", desc: "A warm resonant tone, softly sustained" },
     { file: "sound-12.mp3", desc: "A steady resonant tone, holding gently" },
     { file: "sound-13.mp3", desc: "A continuous low hum, deep and grounding" },
