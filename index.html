@@ -728,6 +728,8 @@ const STAGE_CODES = {
     // This prevents Day 1's completed state from carrying into Day 2.
     const submitBtn = document.getElementById('submit-btn');
     submitBtn.dataset.completed = 'false';
+    const soundBtn = document.getElementById('sound-play-btn');
+    if (soundBtn) { soundBtn.disabled = false; soundBtn.innerText = '▶ PLAY'; }
     submitBtn.innerText = "MARK TODAY'S SESSION COMPLETE";
     submitBtn.style.display = 'block';
 
@@ -817,7 +819,7 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
     const soundscapeAudio = document.getElementById('soundscape-audio');
     if (soundscapeAudio) soundscapeAudio.pause();
     const btn = document.getElementById('sound-play-btn');
-    if (btn) btn.innerText = '▶ PLAY';
+    if (btn) { btn.innerText = '▶ PLAY'; btn.disabled = false; }
   }
 
   function makeNoiseBuffer(ctx) {
@@ -1207,7 +1209,7 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
           soundPlaying = true;
           if (btn) {
             btn.innerText = '■ STOP';
-            btn.disabled = true;
+            btn.disabled = false;
           }
 
           try {
