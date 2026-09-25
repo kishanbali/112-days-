@@ -695,10 +695,11 @@ const STAGE_CODES = {
   const hasValidDayParam = /^\\d+$/.test(dayParam || '') && requestedDay >= 1 && requestedDay <= 112;
 
   // A shared URL with ?day=N is authoritative in every browser/device.
-  // Without ?day=N, continue from this browser's saved progress.
+  // The plain app URL always opens Day 1 as the public starting point.
+  // Existing progress is preserved unless the user explicitly opens ?day=N.
   let currentDay = hasValidDayParam
     ? requestedDay
-    : (parseInt(localStorage.getItem('kemp_current_day'), 10) || 1);
+    : 1;
 
   if (hasValidDayParam) {
     try { localStorage.setItem('kemp_current_day', String(currentDay)); } catch (_) {}
@@ -1364,5 +1365,13 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
   loadDayData();
 </script>
 
-<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js', {updateViaCache:'none'}).catch(()=>{}));}</script><script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}</script></body>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./service-worker.js?v=11',{updateViaCache:'none'})
+      .then(reg=>reg.update())
+      .catch(()=>{});
+  });
+}
+</script></body>
 </html>
