@@ -681,6 +681,10 @@ const STAGE_CODES = {
 
   function checkLock() {
     const stageKey = getCurrentStageKey();
+    if (auditMode) {
+      document.getElementById('lock-overlay').style.display = 'none';
+      return;
+    }
     if (stageKey && !isUnlocked(stageKey)) {
       const stageName = stages.find(s => currentDay <= s.maxDay).name;
       document.getElementById('lock-stage-name').innerText = stageName;
@@ -689,6 +693,8 @@ const STAGE_CODES = {
       document.getElementById('lock-overlay').style.display = 'none';
     }
   }
+
+  const auditMode = new URLSearchParams(window.location.search).get('audit') === '1';
 
   const dayParam = new URLSearchParams(window.location.search).get('day');
   const requestedDay = Number(dayParam);
@@ -780,6 +786,7 @@ const STAGE_CODES = {
     // This makes Day 1 → Day 2 immediate and avoids browser/PWA cache issues.
     currentDay = Math.min(112, Number(currentDay) + 1);
     localStorage.setItem('kemp_current_day', String(currentDay));
+    if (auditMode) localStorage.setItem('kemp_audit_day', String(currentDay));
 
     submitBtn.disabled = false;
     stopTechniqueSound();
@@ -1302,6 +1309,7 @@ From Day 13 onward, continue at your own pace — KEMP EYE AI is here for guidan
       document.getElementById('narration-status').innerText = '';
       currentDay++;
       localStorage.setItem('kemp_current_day', currentDay);
+      if (auditMode) localStorage.setItem('kemp_audit_day', String(currentDay));
       // Ensure the next day always starts as a fresh, uncompleted session.
       const submitBtn = document.getElementById('submit-btn');
       submitBtn.dataset.completed = 'false';
