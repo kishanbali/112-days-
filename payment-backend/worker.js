@@ -18,6 +18,7 @@ async function hmacSha256Hex(secret,message) {
 }
 function safeEqual(a,b){if(typeof a!=='string'||typeof b!=='string'||a.length!==b.length)return false;let r=0;for(let i=0;i<a.length;i++)r|=a.charCodeAt(i)^b.charCodeAt(i);return r===0;}
 function randomToken(bytes=32){const a=new Uint8Array(bytes);crypto.getRandomValues(a);return [...a].map(b=>b.toString(16).padStart(2,'0')).join('');}
+function randomUnlockCode(length=9){const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const a=new Uint8Array(length);crypto.getRandomValues(a);return [...a].map(b=>alphabet[b%alphabet.length]).join('');}
 async function hashAccessToken(env,token){return sha256Hex(`${env.ACCESS_TOKEN_PEPPER}:${token}`);}
 async function razorpay(path,env,options={}){
   const auth=btoa(`${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`);
@@ -48,9 +49,9 @@ async function verifyPayment(request,env){
   const payment=await razorpay(`/payments/${encodeURIComponent(razorpay_payment_id)}`,env,{method:'GET'});
   if(payment.order_id!==razorpay_order_id||payment.status!=='captured')return json({ok:false,error:'Payment is not captured for this order.'},409);
   if(payment.amount!==order.amount_paise||payment.currency!==order.currency)return json({ok:false,error:'Payment amount/currency mismatch.'},409);
-  const accessToken=randomToken(32),accessHash=await hashAccessToken(env,accessToken);
+  const unlockCode=randomUnlockCode(9),accessHash=await hashAccessToken(env,unlockCode);
   await env.DB.prepare(`UPDATE orders SET status='paid',payment_id=?,access_token_hash=?,paid_at=? WHERE order_id=?`).bind(razorpay_payment_id,accessHash,now(),razorpay_order_id).run();
-  return json({ok:true,stage_key:order.stage_key,access_token:accessToken});
+  return json({ok:true,stage_key:order.stage_key,unlock_code:unlockCode,access_token:unlockCode});
 }
 async function webhook(request,env){
   const signature=request.headers.get('x-razorpay-signature'),eventId=request.headers.get('x-razorpay-event-id'),raw=await request.text();
