@@ -27,6 +27,7 @@ async function razorpay(path,env,options={}){
   if(!response.ok)throw new Error(`Razorpay ${response.status}: ${JSON.stringify(body)}`);return body;
 }
 const STAGES=new Set(['L1','L2','L3','L4','L5','L6','L7','L8','L9','L10','L11','L12-20']);
+const PAYMENT_LINKS={L1:'plink_Thz0hCENWRm8k5'};
 async function createOrder(request,env){
   const body=await request.json().catch(()=>null),stageKey=body?.stage_key;
   if(!STAGES.has(stageKey))return json({ok:false,error:'Invalid stage.'},400);
@@ -74,6 +75,27 @@ async function webhook(request,env){
   await env.DB.prepare('INSERT INTO processed_events(event_id,event_name,processed_at) VALUES(?,?,?)').bind(eventId,eventName||'unknown',now()).run();
   return json({ok:true});
 }
+async function paymentLinkAccess(request,env){
+  const url=new URL(request.url);
+  const stageKey=url.searchParams.get('stage');
+  const paymentId=(url.searchParams.get('payment_id')||'').trim();
+  if(!STAGES.has(stageKey))return json({ok:false,error:'Invalid stage.'},400);
+  if(!/^pay_[A-Za-z0-9]+$/.test(paymentId))return json({ok:false,error:'Invalid Razorpay Payment ID.'},400);
+  const plinkId=PAYMENT_LINKS[stageKey];
+  if(!plinkId)return json({ok:false,error:'Payment for this stage is not configured yet.'},409);
+  const links=await razorpay(`/payment_links?payment_id=${encodeURIComponent(paymentId)}`,env,{method:'GET'});
+  const items=Array.isArray(links?.items)?links.items:[];
+  const link=items.find(item => item?.id===plinkId && item?.status==='paid' && item?.currency==='INR' && Number(item?.amount_paid)===33300);
+  if(!link)return json({ok:false,error:'Payment not found on the KEMP EYE ₹333 Payment Link, or the payment is not captured.'},403);
+  const existing=await env.DB.prepare("SELECT stage_key FROM orders WHERE payment_id = ? AND status = 'paid'").bind(paymentId).first();
+  if(existing)return json({ok:false,error:'This payment has already been used to unlock a stage.'},409);
+  const unlockCode=randomUnlockCode(9);
+  const accessHash=await hashAccessToken(env,unlockCode);
+  const checkoutHash=await sha256Hex('payment-link:'+plinkId+':'+paymentId);
+  await env.DB.prepare("INSERT INTO orders(order_id,stage_key,amount_paise,currency,checkout_token_hash,status,payment_id,access_token_hash,created_at,paid_at) VALUES(?,?,?,?,?,'paid',?,?,?,?)")
+    .bind('plink:'+plinkId+':'+paymentId,stageKey,33300,'INR',checkoutHash,paymentId,accessHash,now(),now()).run();
+  return json({ok:true,stage_key:stageKey});
+}
 async function access(request,env){
   const token=new URL(request.url).searchParams.get('token');
   if(!token)return json({ok:false,error:'Missing token.'},400);
@@ -90,6 +112,7 @@ export default {async fetch(request,env){
     if(request.method==='POST'&&url.pathname==='/api/order')response=await createOrder(request,env);
     else if(request.method==='POST'&&url.pathname==='/api/verify')response=await verifyPayment(request,env);
     else if(request.method==='POST'&&url.pathname==='/webhook/razorpay')response=await webhook(request,env);
+    else if(request.method==='GET'&&url.pathname==='/api/payment-link/access')response=await paymentLinkAccess(request,env);
     else if(request.method==='GET'&&url.pathname==='/api/access')response=await access(request,env);
     else response=json({ok:false,error:'Not found.'},404);
   }catch(error){console.error(error);response=json({ok:false,error:'Server error.'},500)}
