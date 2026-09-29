@@ -540,13 +540,14 @@
 <div class="lock-overlay" id="lock-overlay">
   <div class="lock-card">
     <div class="lock-icon">🔒</div>
-    <div class="lock-title">Go Premium</div>
-    <div class="lock-desc">Unlock <strong id="lock-stage-name" style="color:var(--accent-cyan);">this stage</strong> for <strong style="color:var(--accent-gold);">₹333</strong> — a one-time payment per stage.<br><br>Each of the 12 stages beyond your free foundation unlocks separately as you reach it.</div>
-    <button onclick="window.open(RAZORPAY_PAYMENT_LINK, '_blank')" style="width:100%; background:linear-gradient(135deg, #00e5ff, #0088cc); color:#000; font-weight:bold; border:none; padding:13px; border-radius:10px; cursor:pointer; letter-spacing:0.5px; margin-bottom:14px;">PAY ₹333 NOW</button>
-    <div style="font-size:0.72rem; color:var(--text-sub); margin-bottom:14px; text-align:center;">After payment, you'll receive a unique unlock code — enter it below.</div>
-    <input type="text" class="lock-input" id="unlock-input" placeholder="ENTER UNLOCK CODE" maxlength="9">
-    <button class="lock-btn" onclick="tryUnlock()">UNLOCK</button>
-    <div class="lock-error" id="lock-error">Invalid or already-used code. Please check and try again.</div>
+    <div class="lock-title">Unlock This Stage</div>
+    <div class="lock-desc">Continue <strong id="lock-stage-name" style="color:var(--accent-cyan);">this stage</strong> for <strong style="color:var(--accent-gold);">₹333</strong>.<br><br>Payment is one-time for the stage you are entering. Your payment is verified securely before access is granted.</div>
+    <button onclick="openStagePayment()" id="pay-stage-btn" style="width:100%; background:linear-gradient(135deg, #00e5ff, #0088cc); color:#000; font-weight:bold; border:none; padding:13px; border-radius:10px; cursor:pointer; letter-spacing:0.5px; margin-bottom:14px;">PAY ₹333 &amp; CONTINUE</button>
+    <div style="font-size:0.74rem; color:var(--text-sub); margin:2px 0 10px; text-align:center;">Already paid?</div>
+    <input type="text" class="lock-input" id="payment-id-input" placeholder="ENTER RAZORPAY PAYMENT ID" maxlength="40" autocomplete="off">
+    <button class="lock-btn" onclick="verifyCustomerPayment()">VERIFY PAYMENT &amp; UNLOCK</button>
+    <div class="lock-error" id="lock-error">Payment could not be verified. Please check the Payment ID from your Razorpay receipt and try again.</div>
+    <div id="payment-status" style="font-size:0.72rem;color:var(--text-sub);margin-top:10px;line-height:1.4;"></div>
   </div>
 </div>
 
@@ -618,27 +619,13 @@
   };
 
 
-  // Pre-generated one-time unlock codes for Days 13-112
-  // ⚠️ UPDATE THIS once your Razorpay payment link is ready (after KYC approval):
-  // Replace the text below with your real Razorpay Payment Page/Link URL for ₹333
-  const RAZORPAY_PAYMENT_LINK = "https://rzp.io/rzp/CiDsCQy";
+  // Customer payment configuration.
+  // Each paid stage must have its own Razorpay Payment Link.
+  // L1 (Days 13-17) is the live ₹333 link currently configured.
   const PAYMENT_BACKEND_URL = "https://kemp-eye-112-payments-test.kishansaraiya9.workers.dev";
-
-const STAGE_CODES = {
-    'L1': ['1CP8-JS65', '1HAD-LU8P', '1QOJ-AH9T', '24E3-GCKV', '2T7J-5OXV', '2V97-XBAR', '3CPD-LALS', '57ZO-PLXX', 'BHO3-OOND', 'DFGG-FHU1', 'H00Q-TWW1', 'H2BH-JO1M', 'KYV9-YPN5', 'L5ZH-3YIK', 'MYY8-GXGX', 'NU8V-K192', 'NYFX-4M8T', 'OGQE-EQ4Z', 'OHGI-1JNY', 'P8GJ-JU6N', 'Q6V9-MH7F', 'T7RP-WH6N', 'TALY-0G2P', 'X05I-4MOE', 'Z7E5-V0VO'],
-    'L2': ['1XF5-ZW1V', '37R6-6RGC', '3KEP-CMVL', '80AN-YD2I', '9HXF-UPUB', 'A5KO-S6IS', 'AXS7-9CVM', 'BBCG-BKJ7', 'E7DS-IUH4', 'EGJN-UHUZ', 'H6GK-9JUP', 'IQAL-RM0U', 'JQ7A-IV4N', 'JUK0-EMFK', 'MBMW-GGER', 'MI1F-PZP2', 'ML3B-3VTY', 'MLNT-2AGH', 'NLBO-KF75', 'P25C-3541', 'PH2E-0I4J', 'PSCJ-1MG2', 'TWUO-FVBB', 'X3CY-03FD', 'XYS5-TISY'],
-    'L3': ['1KE0-ZGTX', '643W-VZ8V', '79MC-Y7NL', '9AP7-K43Y', '9ZD4-1NDJ', 'BT8U-4GL8', 'DEA4-KMBX', 'DO5T-NX7J', 'G5XU-A2HY', 'IEXK-7OEY', 'IPQA-0CN0', 'JI7H-LD5W', 'JO5V-H91L', 'JTMM-BL67', 'K16Z-P7L9', 'NP51-6JZ3', 'O2AD-QDH7', 'QR9D-AUW5', 'QSWQ-FLES', 'SJ9F-JE03', 'U04T-AVME', 'VT5D-K1C7', 'W1CA-EPY9', 'WVCU-2UM2', 'Y0KY-MHFG'],
-    'L4': ['0GUY-BOYF', '2R86-QERN', '3CM8-87M0', '5LCH-5E6P', '5NFF-QJ4W', '5ZAT-IJOO', '6IXR-K29E', '87TK-V10B', '8HEY-91TL', '8KAG-9ZI6', '9C30-7QX1', '9E8X-18TT', '9PS8-X9P5', 'CBIO-N11K', 'FOTJ-PN4M', 'HCIW-I9FI', 'HSAQ-R3M6', 'JM98-1BHV', 'M6YB-L3TH', 'O8MG-0DQH', 'OYGJ-4OO9', 'PJ8W-FUYE', 'RPGY-RVTW', 'RZHB-H9P5', 'T15E-VG81'],
-    'L5': ['0723-2GNB', '1TYP-VW08', '2O4A-MGJ0', '2VDE-5XGI', '4OHB-RE1H', '56K3-NGYM', '582H-TZG9', '5EV1-KANY', '5VCH-SJEF', '78Z7-Y7AN', 'BHHS-LXWD', 'G5U5-ACB9', 'GHQ7-MYXL', 'GPC6-4CI3', 'IAQG-837H', 'J4AD-ADCC', 'K85Q-I1SZ', 'KXXA-BTDD', 'NFW9-1HPS', 'NMJL-087O', 'PEV3-GWYL', 'QCKM-JLII', 'SE19-T711', 'VIL6-TDR2', 'YENL-HI4T'],
-    'L6': ['207B-38SS', '2M48-MYHK', '3NU4-DRWZ', '632F-37CI', '6L3Q-40RF', '76HW-1SK4', '7P5O-AIIX', 'A71W-JDOS', 'BVDT-HZRE', 'DGPW-HPKD', 'DUVN-MDYX', 'EFIK-U2U2', 'GXLX-6XZV', 'HSD3-ZEKJ', 'KHU0-V6V0', 'KWLG-JRU0', 'LLJE-RQWO', 'LNY4-6ZGV', 'O3J7-EFJM', 'PX7O-VSRA', 'Q0FQ-JNNC', 'SHST-P5TY', 'SQZ6-98CT', 'UGNF-ASRV', 'UR1O-O30A'],
-    'L7': ['1AME-GNK6', '5AVM-JIKD', '6WLN-5DOD', '8HV0-ABPJ', '8YLS-5PH3', 'AT5S-ZMK3', 'BNXE-A2ES', 'CUF6-13TO', 'D8AC-VV7X', 'DB8Y-GQ4E', 'EBL7-M4GZ', 'EOQN-1JR8', 'GDQQ-BUVY', 'GT83-ZIPU', 'L3EE-G6TX', 'L75F-CXKT', 'MP42-Z451', 'NT2I-4JY6', 'PXJS-KKHG', 'V0NQ-HVL2', 'VBCR-ILYZ', 'VRGX-TJ9R', 'VS0Z-TNU7', 'WPDS-6QFE', 'WVFB-5MQH'],
-    'L8': ['0SAU-OZAU', '2YR2-55DI', '3VXE-WPEQ', '4HNQ-DGL0', '4Y2A-J9BG', '564O-9MLG', '6TOG-EPOU', 'BXBL-L1HO', 'CEXZ-8YHK', 'CGRL-V7PV', 'DM4D-I4IO', 'EJAM-YMV9', 'IPS2-IF65', 'IZ2C-27TE', 'J4V9-R7G6', 'JXA3-5II3', 'OCH6-XX05', 'QBXG-D87R', 'QHQD-ZTP7', 'QIY4-PNJT', 'QVTQ-EO20', 'TEVL-ACAP', 'TLVA-BNK1', 'V76P-SSLZ', 'WRUD-MG7Q'],
-    'L9': ['0L4I-DLMC', '1HT5-Z8BM', '2SFM-YYDB', '2VJ3-7B22', '3E3U-61MP', '469J-WQQV', '7CCS-IBR6', '8AEI-TYSJ', '8XA9-NNK4', '93HM-F6KI', '93TM-QZF7', 'B5LU-GZHY', 'C3HP-Q0U0', 'E2AD-DBD2', 'ECYF-ZW1M', 'FIRS-V8XT', 'GZW8-4QXA', 'JH5J-VPRO', 'NBPH-PA26', 'OP35-GZXK', 'RSMR-J9TY', 'VYI7-VDH5', 'WOEH-WCP6', 'XNKU-XAHX', 'ZGA8-D3GS'],
-    'L10': ['1TQL-7IOD', '26BH-DFEV', '2TPU-9EUJ', '343Q-H5Q9', '5GEO-2OKA', '6587-5Z8G', '6YF2-8QYT', '8OJW-P4C6', '8P7H-F1UE', 'CDQ4-TJRL', 'E8KW-BUL8', 'EGPD-CV8O', 'F38T-TWYQ', 'FIU5-5ML8', 'FSJ8-K5T3', 'KO4D-QUTE', 'LCLA-GRN6', 'LMR1-EA33', 'RGGN-3G7R', 'SIK8-8ZGI', 'TI7B-Y1BI', 'V1LJ-MAXH', 'XW2Y-IKS7', 'XXFG-2U1D', 'ZTYC-9ZTU'],
-    'L11': ['1PSY-65QR', '4D5L-YZM1', '4G1O-WCOZ', '67T5-ZDCK', '7AOB-YGID', '8JT9-WG7S', 'ANWE-866O', 'AWS1-1FQP', 'B4UU-PACN', 'CVNN-ZTK9', 'DI03-ZZN3', 'G1PO-HXQE', 'INV9-PTAC', 'IYYP-X6C0', 'JO4W-UHE9', 'KG9F-WEP9', 'KVG1-B9XZ', 'LIJB-EQ9P', 'LYH2-6GRZ', 'MMHS-MNZ5', 'SQ40-3KCO', 'VJQ1-97KK', 'X10Z-X52B', 'XCBK-G8U9', 'YHYB-OGCW'],
-    'L12-20': ['2VO1-PQNS', '4NTW-LI22', '4S24-5J72', '50UJ-XEEI', '71NV-BNOL', '8CYW-P97V', '9NGV-ILYY', 'BTN6-CVP7', 'BUEJ-545M', 'E9TB-RZYO', 'HYP2-HIPD', 'IKYA-QP9N', 'LK9Q-3NLG', 'NJJ3-4ZMZ', 'O0IC-69FA', 'OGS7-H41U', 'RIZ6-A948', 'TG42-8YSL', 'TGK2-O0W7', 'UP6L-S07Q', 'UTW0-H8VS', 'WKGF-D8MO', 'X8U5-6YU7', 'XL9X-795A', 'YSE5-27UC']
+  const RAZORPAY_STAGE_LINKS = {
+    L1: "https://rzp.io/rzp/QRCsphXK"
   };
-
   function isUnlocked(stageKey) {
     const unlockedStages = JSON.parse(localStorage.getItem('kemp_unlocked_stages') || '[]');
     return unlockedStages.includes(stageKey);
@@ -659,46 +646,62 @@ const STAGE_CODES = {
     return sensory ? sensory.audioKey : null;
   }
 
-  async function tryUnlock() {
-    const input = document.getElementById('unlock-input');
-    const code = input.value.trim().toUpperCase();
+  function openStagePayment() {
     const stageKey = getCurrentStageKey();
-    if (!stageKey || !code) return;
+    const link = stageKey ? RAZORPAY_STAGE_LINKS[stageKey] : null;
+    const status = document.getElementById('payment-status');
+    if (!link) {
+      status.innerText = 'Payment for this stage is being configured. Please check back shortly.';
+      return;
+    }
+    window.open(link, '_blank', 'noopener,noreferrer');
+    status.innerText = 'Complete the ₹333 payment in the new tab. Then return here and enter the Razorpay Payment ID from your receipt.';
+  }
 
-    let usedCodes = JSON.parse(localStorage.getItem('kemp_used_codes_global') || '[]');
-    const validCodesForStage = STAGE_CODES[stageKey] || [];
+  async function verifyCustomerPayment() {
+    const input = document.getElementById('payment-id-input');
+    const paymentId = input.value.trim();
+    const stageKey = getCurrentStageKey();
+    const error = document.getElementById('lock-error');
+    const status = document.getElementById('payment-status');
 
-    // Keep the existing pre-generated/manual codes working.
-    if (validCodesForStage.includes(code) && !usedCodes.includes(code)) {
-      usedCodes.push(code);
-      localStorage.setItem('kemp_used_codes_global', JSON.stringify(usedCodes));
-      unlockStage(stageKey);
-      document.getElementById('lock-overlay').style.display = 'none';
-      document.getElementById('lock-error').style.display = 'none';
-      input.value = '';
+    error.style.display = 'none';
+    status.innerText = '';
+
+    if (!stageKey || !paymentId) {
+      error.innerText = 'Please enter the Razorpay Payment ID shown on your payment receipt.';
+      error.style.display = 'block';
       return;
     }
 
-    // Test payment codes are generated by the secure payment backend only
-    // after Razorpay reports a captured payment.
-    const lockError = document.getElementById('lock-error');
-    lockError.style.display = 'none';
+    status.innerText = 'Verifying your payment securely…';
+
     try {
-      const response = await fetch(PAYMENT_BACKEND_URL + '/api/access?token=' + encodeURIComponent(code), {
-        method: 'GET',
-        cache: 'no-store'
-      });
-      const result = await response.json();
+      const response = await fetch(
+        PAYMENT_BACKEND_URL + '/api/payment-link/access?stage=' +
+        encodeURIComponent(stageKey) + '&payment_id=' + encodeURIComponent(paymentId),
+        { method: 'GET', cache: 'no-store' }
+      );
+      const result = await response.json().catch(() => ({}));
+
       if (response.ok && result.ok && result.stage_key === stageKey) {
         unlockStage(stageKey);
-        lockError.style.display = 'none';
+        error.style.display = 'none';
         input.value = '';
+        status.innerText = 'Payment verified. This stage is now unlocked.';
+        document.getElementById('lock-overlay').style.display = 'none';
         return;
       }
+
+      error.innerText = result.error || 'Payment could not be verified. Please check the Payment ID from your Razorpay receipt.';
+      error.style.display = 'block';
+      status.innerText = '';
     } catch (err) {
-      console.error('KEMP EYE payment unlock verification failed:', err);
+      console.error('KEMP EYE payment verification failed:', err);
+      error.innerText = 'We could not reach the payment verification service. Please try again in a moment.';
+      error.style.display = 'block';
+      status.innerText = '';
     }
-    lockError.style.display = 'block';
   }
 
   function checkLock() {
