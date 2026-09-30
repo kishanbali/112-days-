@@ -80,7 +80,7 @@ async function paymentLinkAccess(request,env){
   const stageKey=url.searchParams.get('stage');
   const paymentId=(url.searchParams.get('payment_id')||'').trim();
   if(!STAGES.has(stageKey))return json({ok:false,error:'Invalid stage.'},400);
-  if(!/^pay_[A-Za-z0-9]+$/.test(paymentId))return json({ok:false,error:'Invalid Razorpay Payment ID.'},400);
+  if(!/^[A-Za-z0-9_\-]+$/.test(paymentId))return json({ok:false,error:'Invalid Razorpay Payment ID.'},400);
   const plinkId=PAYMENT_LINKS[stageKey];
   if(!plinkId)return json({ok:false,error:'Payment for this stage is not configured yet.'},409);
   const links=await razorpay(`/payment_links?payment_id=${encodeURIComponent(paymentId)}`,env,{method:'GET'});
