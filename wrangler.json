@@ -1,0 +1,5 @@
+{
+  "name": "kemp-eye-112-payments-test",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-01"
+}
